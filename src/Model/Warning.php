@@ -26,8 +26,8 @@ use Flarum\User\User;
  * @property User $warnedUser
  * @property User|null $hiddenByUser
  * @property int $user_id
- * @property Post $post
- * @property int $post_id
+ * @property Post|null $post
+ * @property int|null $post_id
  * @property string $public_comment
  * @property string $private_comment
  * @property int $strikes
