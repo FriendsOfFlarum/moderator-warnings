@@ -1,4 +1,4 @@
-import UserPage from 'flarum/components/UserPage';
+import UserPage from 'flarum/forum/components/UserPage';
 import WarningList from './WarningList';
 
 export default class WarningPage extends UserPage {

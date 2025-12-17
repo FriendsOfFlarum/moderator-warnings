@@ -1,6 +1,6 @@
-import { extend } from 'flarum/extend';
-import UserPage from 'flarum/components/UserPage';
-import LinkButton from 'flarum/components/LinkButton';
+import { extend } from 'flarum/common/extend';
+import UserPage from 'flarum/forum/components/UserPage';
+import LinkButton from 'flarum/common/components/LinkButton';
 import WarningPage from './components/WarningPage';
 
 export default function () {
@@ -24,7 +24,7 @@ export default function () {
             icon: 'fas fa-exclamation-circle',
           },
           [
-            app.translator.trans('askvortsov-moderator-warnings.forum.user.warnings'),
+            app.translator.trans('fof-moderator-warnings.forum.user.warnings'),
             this.user.visibleWarningCount() > 0 ? <span className="Button-badge">{this.user.visibleWarningCount()}</span> : '',
           ]
         ),

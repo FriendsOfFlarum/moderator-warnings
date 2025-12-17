@@ -1,4 +1,4 @@
-askvortsov-moderator-warnings:
+fof-moderator-warnings:
   admin:
     permissions:
       manage_warnings: Create and remove moderator warnings

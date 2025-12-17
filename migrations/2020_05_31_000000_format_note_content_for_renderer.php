@@ -9,7 +9,7 @@
  *  LICENSE file that was distributed with this source code.
  */
 
-use Askvortsov\FlarumWarnings\Model\Warning;
+use FoF\ModeratorWarnings\Model\Warning;
 use Illuminate\Database\Schema\Builder;
 
 return [

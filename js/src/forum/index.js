@@ -1,16 +1,15 @@
-import app from 'flarum/app';
-import NotificationGrid from 'flarum/components/NotificationGrid';
-import { Extend } from '@flarum/core/forum';
-import { extend } from 'flarum/extend';
-import User from 'flarum/models/User';
-import Model from 'flarum/Model';
+import app from 'flarum/forum/app';
+import NotificationGrid from 'flarum/forum/components/NotificationGrid';
+import { extend } from 'flarum/common/extend';
+import User from 'flarum/common/models/User';
+import Model from 'flarum/common/Model';
 import addWarningControl from './addWarningControl';
 import addWarningPage from './addWarningPage';
 import addWarningsToPosts from './addWarningsToPosts';
 import WarningNotification from './components/WarningNotification';
 import Warning from './model/Warning';
 
-app.initializers.add('askvortsov/flarum-moderator-warnings', (app) => {
+app.initializers.add('fof-moderator-warnings', (app) => {
   app.store.models.warnings = Warning;
   User.prototype.canViewWarnings = Model.attribute('canViewWarnings');
   User.prototype.canManageWarnings = Model.attribute('canManageWarnings');
@@ -25,7 +24,7 @@ app.initializers.add('askvortsov/flarum-moderator-warnings', (app) => {
     items.add('warning', {
       name: 'warning',
       icon: 'fas fa-exclamation-circle',
-      label: app.translator.trans('askvortsov-moderator-warnings.forum.settings.warning_notification_label'),
+      label: app.translator.trans('fof-moderator-warnings.forum.settings.warning_notification_label'),
     });
   });
 });

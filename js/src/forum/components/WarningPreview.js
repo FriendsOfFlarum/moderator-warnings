@@ -1,5 +1,5 @@
-import Component from 'flarum/Component';
-import Link from 'flarum/components/Link';
+import Component from 'flarum/common/Component';
+import Link from 'flarum/common/components/Link';
 import WarningListItem from './WarningListItem';
 
 export default class WarningPreview extends Component {

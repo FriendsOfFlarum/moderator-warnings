@@ -1,4 +1,4 @@
-import Component from 'flarum/Component';
+import Component from 'flarum/common/Component';
 import PostWarning from './PostWarning';
 import WarningPreview from './WarningPreview';
 

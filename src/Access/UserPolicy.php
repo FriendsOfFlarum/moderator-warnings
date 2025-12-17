@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of askvortsov/flarum-moderator-warnings
+ * This file is part of fof/moderator-warnings
  *
  *  Copyright (c) 2021 Alexander Skvortsov.
  *
@@ -9,7 +9,7 @@
  *  LICENSE file that was distributed with this source code.
  */
 
-namespace Askvortsov\FlarumWarnings\Access;
+namespace FoF\ModeratorWarnings\Access;
 
 use Flarum\User\Access\AbstractPolicy;
 use Flarum\User\User;

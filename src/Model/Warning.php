@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of askvortsov/flarum-moderator-warnings
+ * This file is part of fof/moderator-warnings
  *
  *  Copyright (c) 2021 Alexander Skvortsov.
  *
@@ -9,8 +9,9 @@
  *  LICENSE file that was distributed with this source code.
  */
 
-namespace Askvortsov\FlarumWarnings\Model;
+namespace FoF\ModeratorWarnings\Model;
 
+use Carbon\Carbon;
 use Flarum\Database\AbstractModel;
 use Flarum\Database\ScopeVisibilityTrait;
 use Flarum\Formatter\Formatter;
@@ -18,8 +19,19 @@ use Flarum\Post\Post;
 use Flarum\User\User;
 
 /**
- * @property Date
- * @property User addedByUser
+ * @property Carbon $created_at
+ * @property Carbon $hidden_at
+ * @property User $addedByUser
+ * @property User $warnedUser
+ * @property User|null $hiddenByUser
+ * @property int $user_id
+ * @property Post $post
+ * @property int $post_id
+ * @property string $public_comment
+ * @property string $private_comment
+ * @property int $strikes
+ * @property int|null $hidden_user_id
+ * @property int|null $created_user_id
  */
 class Warning extends AbstractModel
 {

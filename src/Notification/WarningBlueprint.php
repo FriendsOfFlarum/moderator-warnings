@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of askvortsov/flarum-moderator-warnings
+ * This file is part of fof/moderator-warnings
  *
  *  Copyright (c) 2021 Alexander Skvortsov.
  *
@@ -9,9 +9,9 @@
  *  LICENSE file that was distributed with this source code.
  */
 
-namespace Askvortsov\FlarumWarnings\Notification;
+namespace FoF\ModeratorWarnings\Notification;
 
-use Askvortsov\FlarumWarnings\Model\Warning;
+use FoF\ModeratorWarnings\Model\Warning;
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Notification\MailableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -23,9 +23,6 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface
      */
     public $warning;
 
-    /**
-     * @param Warning $post
-     */
     public function __construct(Warning $warning)
     {
         $this->warning = $warning;
@@ -59,7 +56,7 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface
      */
     public function getEmailView()
     {
-        return ['text' => 'askvortsov-moderator-warnings::emails.warning'];
+        return ['text' => 'fof-moderator-warnings::emails.warning'];
     }
 
     /**
@@ -76,7 +73,7 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface
 
     public function getTranslation()
     {
-        return 'askvortsov-moderator-warnings.emails.'.($this->warning->post_id ? 'post_warned' : 'user_warned');
+        return 'fof-moderator-warnings.emails.'.($this->warning->post_id ? 'post_warned' : 'user_warned');
     }
 
     public function getUnparsedComment()

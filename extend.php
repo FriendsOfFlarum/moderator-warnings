@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of askvortsov/flarum-moderator-warnings
+ * This file is part of fof/moderator-warnings
  *
  *  Copyright (c) 2021 Alexander Skvortsov.
  *
@@ -9,14 +9,14 @@
  *  LICENSE file that was distributed with this source code.
  */
 
-namespace Askvortsov\FlarumWarnings;
+namespace FoF\ModeratorWarnings;
 
-use Askvortsov\FlarumWarnings\Access\UserPolicy;
-use Askvortsov\FlarumWarnings\Api\Controller;
-use Askvortsov\FlarumWarnings\Api\Serializer\WarningSerializer;
-use Askvortsov\FlarumWarnings\Model\Warning;
-use Askvortsov\FlarumWarnings\Notification\WarningBlueprint;
-use Askvortsov\FlarumWarnings\Provider\WarningProvider;
+use FoF\ModeratorWarnings\Access\UserPolicy;
+use FoF\ModeratorWarnings\Api\Controller;
+use FoF\ModeratorWarnings\Api\Serializer\WarningSerializer;
+use FoF\ModeratorWarnings\Model\Warning;
+use FoF\ModeratorWarnings\Notification\WarningBlueprint;
+use FoF\ModeratorWarnings\Provider\WarningProvider;
 use Flarum\Api\Controller as FlarumController;
 use Flarum\Api\Serializer as FlarumSerializer;
 use Flarum\Extend;
@@ -43,7 +43,7 @@ return [
         ->hasMany('warnings', Warning::class, 'post_id'),
 
     (new Extend\View())
-        ->namespace('askvortsov-moderator-warnings', __DIR__.'/views'),
+        ->namespace('fof-moderator-warnings', __DIR__.'/views'),
 
     (new Extend\Notification())
         ->type(WarningBlueprint::class, WarningSerializer::class, ['alert', 'email']),
