@@ -1,12 +1,12 @@
-import app from 'flarum/app';
+import app from 'flarum/admin/app';
 
-app.initializers.add('askvortsov/flarum-moderator-warnings', () => {
+app.initializers.add('fof-moderator-warnings', () => {
   app.extensionData
-    .for('askvortsov-moderator-warnings')
+    .for('fof-moderator-warnings')
     .registerPermission(
       {
         icon: 'fas fa-images',
-        label: app.translator.trans('askvortsov-moderator-warnings.admin.permissions.view_warnings'),
+        label: app.translator.trans('fof-moderator-warnings.admin.permissions.view_warnings'),
         permission: 'user.viewWarnings',
       },
       'moderate',
@@ -15,7 +15,7 @@ app.initializers.add('askvortsov/flarum-moderator-warnings', () => {
     .registerPermission(
       {
         icon: 'fas fa-edit',
-        label: app.translator.trans('askvortsov-moderator-warnings.admin.permissions.manage_warnings'),
+        label: app.translator.trans('fof-moderator-warnings.admin.permissions.manage_warnings'),
         permission: 'user.manageWarnings',
       },
       'moderate',
@@ -24,7 +24,7 @@ app.initializers.add('askvortsov/flarum-moderator-warnings', () => {
     .registerPermission(
       {
         icon: 'fas fa-times',
-        label: app.translator.trans('askvortsov-moderator-warnings.admin.permissions.delete_warnings'),
+        label: app.translator.trans('fof-moderator-warnings.admin.permissions.delete_warnings'),
         permission: 'user.deleteWarnings',
       },
       'moderate',

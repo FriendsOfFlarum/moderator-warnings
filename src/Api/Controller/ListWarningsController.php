@@ -1,22 +1,23 @@
 <?php
 
 /*
- * This file is part of askvortsov/flarum-moderator-warnings
+ * This file is part of fof/moderator-warnings
  *
- *  Copyright (c) 2021 Alexander Skvortsov.
+ * Copyright (c) Alexander Skvortsov.
+ * Copyright (c) FriendsOfFlarum
  *
- *  For detailed copyright and license information, please view the
- *  LICENSE file that was distributed with this source code.
+ * For detailed copyright and license information, please view the
+ * LICENSE file that was distributed with this source code.
  */
 
-namespace Askvortsov\FlarumWarnings\Api\Controller;
+namespace FoF\ModeratorWarnings\Api\Controller;
 
-use Askvortsov\FlarumWarnings\Api\Serializer\WarningSerializer;
-use Askvortsov\FlarumWarnings\Model\Warning;
 use Flarum\Api\Controller\AbstractListController;
 use Flarum\Http\RequestUtil;
 use Flarum\User\Exception\PermissionDeniedException;
 use Flarum\User\User;
+use FoF\ModeratorWarnings\Api\Serializer\WarningSerializer;
+use FoF\ModeratorWarnings\Model\Warning;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;

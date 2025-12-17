@@ -1,25 +1,26 @@
 <?php
 
 /*
- * This file is part of askvortsov/flarum-moderator-warnings
+ * This file is part of fof/moderator-warnings
  *
- *  Copyright (c) 2021 Alexander Skvortsov.
+ * Copyright (c) Alexander Skvortsov.
+ * Copyright (c) FriendsOfFlarum
  *
- *  For detailed copyright and license information, please view the
- *  LICENSE file that was distributed with this source code.
+ * For detailed copyright and license information, please view the
+ * LICENSE file that was distributed with this source code.
  */
 
-namespace Askvortsov\FlarumWarnings\Api\Controller;
+namespace FoF\ModeratorWarnings\Api\Controller;
 
-use Askvortsov\FlarumWarnings\Api\Serializer\WarningSerializer;
-use Askvortsov\FlarumWarnings\Model\Warning;
-use Askvortsov\FlarumWarnings\Notification\WarningBlueprint;
 use Flarum\Api\Controller\AbstractCreateController;
 use Flarum\Foundation\ValidationException;
 use Flarum\Http\RequestUtil;
 use Flarum\Locale\Translator;
 use Flarum\Notification\NotificationSyncer;
 use Flarum\Post\Post;
+use FoF\ModeratorWarnings\Api\Serializer\WarningSerializer;
+use FoF\ModeratorWarnings\Model\Warning;
+use FoF\ModeratorWarnings\Notification\WarningBlueprint;
 use Illuminate\Support\Carbon;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
@@ -60,7 +61,7 @@ class CreateWarningController extends AbstractCreateController
         $publicComment = $requestData['public_comment'];
 
         if (trim($publicComment) === '') {
-            throw new ValidationException(['message' => $this->translator->trans('askvortsov-moderator-warnings.forum.validation.public_comment_required')]);
+            throw new ValidationException(['message' => $this->translator->trans('fof-moderator-warnings.forum.validation.public_comment_required')]);
         }
 
         $warning = new Warning();
@@ -80,7 +81,7 @@ class CreateWarningController extends AbstractCreateController
         }
 
         if ($warning->strikes < 0 || $warning->strikes > 5) {
-            throw new ValidationException(['message' => $this->translator->trans('askvortsov-moderator-warnings.forum.validation.invalid_strike_count')]);
+            throw new ValidationException(['message' => $this->translator->trans('fof-moderator-warnings.forum.validation.invalid_strike_count')]);
         }
 
         $warning->save();

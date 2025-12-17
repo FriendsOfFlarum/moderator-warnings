@@ -1,8 +1,8 @@
-import { extend } from 'flarum/extend';
-import app from 'flarum/app';
-import PostControls from 'flarum/utils/PostControls';
-import UserControls from 'flarum/utils/UserControls';
-import Button from 'flarum/components/Button';
+import { extend } from 'flarum/common/extend';
+import app from 'flarum/forum/app';
+import PostControls from 'flarum/forum/utils/PostControls';
+import UserControls from 'flarum/forum/utils/UserControls';
+import Button from 'flarum/common/components/Button';
 
 import WarningModal from './components/WarningModal';
 
@@ -24,7 +24,7 @@ export default function () {
           })
         }
       >
-        {app.translator.trans('askvortsov-moderator-warnings.forum.post_controls.warning_button')}
+        {app.translator.trans('fof-moderator-warnings.forum.post_controls.warning_button')}
       </Button>
     );
   });
@@ -45,7 +45,7 @@ export default function () {
           })
         }
       >
-        {app.translator.trans('askvortsov-moderator-warnings.forum.post_controls.warning_button')}
+        {app.translator.trans('fof-moderator-warnings.forum.post_controls.warning_button')}
       </Button>
     );
   });

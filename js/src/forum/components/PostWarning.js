@@ -1,6 +1,6 @@
-import Component from 'flarum/Component';
-import icon from 'flarum/helpers/icon';
-import username from 'flarum/helpers/username';
+import Component from 'flarum/common/Component';
+import icon from 'flarum/common/helpers/icon';
+import username from 'flarum/common/helpers/username';
 import WarningPreview from './WarningPreview';
 
 export default class PostWarning extends Component {
@@ -16,11 +16,11 @@ export default class PostWarning extends Component {
         <span className="Post-warning-summary">
           {icon('fas fa-exclamation-circle')}
           {this.warning.strikes()
-            ? app.translator.trans('askvortsov-moderator-warnings.forum.post.warning', {
+            ? app.translator.trans('fof-moderator-warnings.forum.post.warning', {
                 strikes: this.warning.strikes() || 0,
                 mod_username: username(this.warning.addedByUser()),
               })
-            : app.translator.trans('askvortsov-moderator-warnings.forum.post.warning_no_strikes', {
+            : app.translator.trans('fof-moderator-warnings.forum.post.warning_no_strikes', {
                 mod_username: username(this.warning.addedByUser()),
               })}
         </span>

@@ -1,11 +1,11 @@
-import Component from 'flarum/Component';
-import app from 'flarum/app';
-import LoadingIndicator from 'flarum/components/LoadingIndicator';
+import Component from 'flarum/common/Component';
+import app from 'flarum/forum/app';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import WarningListItem from './WarningListItem';
-import Button from 'flarum/components/Button';
+import Button from 'flarum/common/components/Button';
 import WarningModal from './WarningModal';
-import listItems from 'flarum/helpers/listItems';
-import ItemList from 'flarum/utils/ItemList';
+import listItems from 'flarum/common/helpers/listItems';
+import ItemList from 'flarum/common/utils/ItemList';
 
 export default class WarningList extends Component {
   oninit(vnode) {
@@ -27,8 +27,8 @@ export default class WarningList extends Component {
       <div className="WarningList">
         <h1 className="WarningList-warnings">
           {this.strikeCount()
-            ? app.translator.trans('askvortsov-moderator-warnings.forum.warning_list.warnings', { strikes: this.strikeCount() || 0 })
-            : app.translator.trans('askvortsov-moderator-warnings.forum.warning_list.warnings_no_strikes')}
+            ? app.translator.trans('fof-moderator-warnings.forum.warning_list.warnings', { strikes: this.strikeCount() || 0 })
+            : app.translator.trans('fof-moderator-warnings.forum.warning_list.warnings_no_strikes')}
         </h1>
         <div class="Warnings-toolbar">
           <ul className="Warnings-toolbar-action">{listItems(this.actionItems().toArray())}</ul>
@@ -42,7 +42,7 @@ export default class WarningList extends Component {
             );
           })}
           {!this.loading && this.warnings.length === 0 && (
-            <label>{app.translator.trans('askvortsov-moderator-warnings.forum.warning_list.no_warnings')}</label>
+            <label>{app.translator.trans('fof-moderator-warnings.forum.warning_list.no_warnings')}</label>
           )}
         </ul>
         <div className="WarningList-loadMore">{loading}</div>
@@ -57,7 +57,7 @@ export default class WarningList extends Component {
       items.add(
         'create_warning',
         <Button className="Button Button--primary" onclick={this.handleOnClickCreate.bind(this)}>
-          {app.translator.trans('askvortsov-moderator-warnings.forum.warning_list.add_button')}
+          {app.translator.trans('fof-moderator-warnings.forum.warning_list.add_button')}
         </Button>
       );
     }

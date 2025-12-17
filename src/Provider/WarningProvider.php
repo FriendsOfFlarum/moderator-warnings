@@ -1,24 +1,25 @@
 <?php
 
 /*
- * This file is part of askvortsov/flarum-moderator-warnings
+ * This file is part of fof/moderator-warnings
  *
- *  Copyright (c) 2021 Alexander Skvortsov.
+ * Copyright (c) Alexander Skvortsov.
+ * Copyright (c) FriendsOfFlarum
  *
- *  For detailed copyright and license information, please view the
- *  LICENSE file that was distributed with this source code.
+ * For detailed copyright and license information, please view the
+ * LICENSE file that was distributed with this source code.
  */
 
-namespace Askvortsov\FlarumWarnings\Provider;
+namespace FoF\ModeratorWarnings\Provider;
 
-use Askvortsov\FlarumWarnings\Model\Warning;
 use Flarum\Formatter\Formatter;
 use Flarum\Foundation\AbstractServiceProvider;
+use FoF\ModeratorWarnings\Model\Warning;
 
 class WarningProvider extends AbstractServiceProvider
 {
     public function register()
     {
-        Warning::setFormatter($this->app->make(Formatter::class));
+        Warning::setFormatter($this->container->make(Formatter::class));
     }
 }

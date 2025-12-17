@@ -1,5 +1,5 @@
 {
-    "name": "askvortsov/flarum-moderator-warnings",
+    "name": "fof/moderator-warnings",
     "description": "Moderator Warnings extension for flarum.",
     "keywords": [
         "flarum"
@@ -7,32 +7,40 @@
     "type": "flarum-extension",
     "license": "MIT",
     "support": {
-        "issues": "https://github.com/askvortsov1/flarum-moderator-warnings/issues",
-        "source": "https://github.com/askvortsov1/flarum-moderator-warnings",
+        "issues": "https://github.com/FriendsOfFlarum/moderator-warnings/issues",
+        "source": "https://github.com/FriendsOfFlarum/moderator-warnings",
         "forum": "https://discuss.flarum.org/d/23228-moderator-warnings-extension"
     },
     "require": {
-        "flarum/core": "^1.0.0"
+        "flarum/core": "^1.8.0"
+    },
+    "replace": {
+        "askvortsov/flarum-moderator-warnings": "*"
     },
     "authors": [
         {
             "name": "Alexander Skvortsov",
             "email": "askvortsov@flarum.org",
             "role": "Developer"
+        },
+        {
+            "name": "IanM",
+            "email": "ian@flarum.org",
+            "role": "Maintainer"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Askvortsov\\FlarumWarnings\\": "src/"
+            "FoF\\ModeratorWarnings\\": "src/"
         }
     },
     "extra": {
         "flarum-extension": {
-            "title": "Moderator Warnings",
+            "title": "FoF Moderator Warnings",
             "category": "feature",
             "icon": {
                 "name": "fas fa-exclamation-circle",
-                "backgroundColor": "#6932D1",
+                "backgroundColor": "#e74c3c",
                 "color": "#fff"
             }
         },
@@ -56,10 +64,12 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Askvortsov\\FlarumWarnings\\Tests\\": "tests/"
+            "FoF\\ModeratorWarnings\\Tests\\": "tests/"
         }
     },
     "scripts": {
+        "analyse:phpstan": "phpstan analyse",
+        "clear-cache:phpstan": "phpstan clear-result-cache",
         "test": [
             "@test:unit",
             "@test:integration"
@@ -69,12 +79,14 @@
         "test:setup": "@php tests/integration/setup.php"
     },
     "scripts-descriptions": {
+        "analyse:phpstan": "Run static analysis",
         "test": "Runs all tests.",
         "test:unit": "Runs all unit tests.",
         "test:integration": "Runs all integration tests.",
         "test:setup": "Sets up a database for use with integration tests. Execute this only once."
     },
     "require-dev": {
-        "flarum/testing": "^1.0.0"
+        "flarum/testing": "^1.0.0",
+        "flarum/phpstan": "^1.0.0"
     }
 }

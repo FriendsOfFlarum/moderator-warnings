@@ -1,5 +1,5 @@
-import Component from 'flarum/Component';
-import PostPreview from 'flarum/components/PostPreview';
+import Component from 'flarum/common/Component';
+import PostPreview from 'flarum/forum/components/PostPreview';
 
 export default class WarningPost extends Component {
   view() {
