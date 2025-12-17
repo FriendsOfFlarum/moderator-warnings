@@ -3,23 +3,24 @@
 /*
  * This file is part of fof/moderator-warnings
  *
- *  Copyright (c) 2021 Alexander Skvortsov.
+ * Copyright (c) Alexander Skvortsov.
+ * Copyright (c) FriendsOfFlarum
  *
- *  For detailed copyright and license information, please view the
- *  LICENSE file that was distributed with this source code.
+ * For detailed copyright and license information, please view the
+ * LICENSE file that was distributed with this source code.
  */
 
 namespace FoF\ModeratorWarnings\Api\Controller;
 
-use FoF\ModeratorWarnings\Api\Serializer\WarningSerializer;
-use FoF\ModeratorWarnings\Model\Warning;
-use FoF\ModeratorWarnings\Notification\WarningBlueprint;
 use Flarum\Api\Controller\AbstractCreateController;
 use Flarum\Foundation\ValidationException;
 use Flarum\Http\RequestUtil;
 use Flarum\Locale\Translator;
 use Flarum\Notification\NotificationSyncer;
 use Flarum\Post\Post;
+use FoF\ModeratorWarnings\Api\Serializer\WarningSerializer;
+use FoF\ModeratorWarnings\Model\Warning;
+use FoF\ModeratorWarnings\Notification\WarningBlueprint;
 use Illuminate\Support\Carbon;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;

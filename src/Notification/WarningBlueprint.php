@@ -3,17 +3,18 @@
 /*
  * This file is part of fof/moderator-warnings
  *
- *  Copyright (c) 2021 Alexander Skvortsov.
+ * Copyright (c) Alexander Skvortsov.
+ * Copyright (c) FriendsOfFlarum
  *
- *  For detailed copyright and license information, please view the
- *  LICENSE file that was distributed with this source code.
+ * For detailed copyright and license information, please view the
+ * LICENSE file that was distributed with this source code.
  */
 
 namespace FoF\ModeratorWarnings\Notification;
 
-use FoF\ModeratorWarnings\Model\Warning;
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Notification\MailableInterface;
+use FoF\ModeratorWarnings\Model\Warning;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WarningBlueprint implements BlueprintInterface, MailableInterface
