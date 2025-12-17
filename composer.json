@@ -9,7 +9,7 @@
     "support": {
         "issues": "https://github.com/FriendsOfFlarum/moderator-warnings/issues",
         "source": "https://github.com/FriendsOfFlarum/moderator-warnings",
-        "forum": "https://discuss.flarum.org/d/23228-moderator-warnings-extension"
+        "forum": "https://discuss.flarum.org/d/38529-friendsofflarum-moderator-warnings"
     },
     "require": {
         "flarum/core": "^1.8.0"
