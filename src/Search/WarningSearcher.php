@@ -1,5 +1,15 @@
 <?php
 
+/*
+ * This file is part of fof/moderator-warnings
+ *
+ * Copyright (c) Alexander Skvortsov.
+ * Copyright (c) FriendsOfFlarum
+ *
+ * For detailed copyright and license information, please view the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace FoF\ModeratorWarnings\Search;
 
 use Flarum\Search\Database\AbstractSearcher;

@@ -79,7 +79,7 @@ class UpdateTest extends TestCase
     public function moderator_can_restore_hidden_warning()
     {
         $this->app();
-        
+
         // First hide the warning
         $warning = Warning::find(1);
         $warning->hidden_at = Carbon::now();

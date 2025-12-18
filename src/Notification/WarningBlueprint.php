@@ -16,7 +16,6 @@ use Flarum\Notification\AlertableInterface;
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Notification\MailableInterface;
 use FoF\ModeratorWarnings\Model\Warning;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WarningBlueprint implements BlueprintInterface, MailableInterface, AlertableInterface
 {

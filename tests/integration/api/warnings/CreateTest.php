@@ -20,7 +20,6 @@ use Flarum\Testing\integration\TestCase;
 use Flarum\User\User;
 use FoF\ModeratorWarnings\Model\Warning;
 use PHPUnit\Framework\Attributes\Test;
-use Flarum\Extend;
 
 class CreateTest extends TestCase
 {

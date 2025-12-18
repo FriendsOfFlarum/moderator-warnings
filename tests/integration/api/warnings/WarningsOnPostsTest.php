@@ -85,7 +85,7 @@ class WarningsOnPostsTest extends TestCase
 
         // Check included warnings
         $included = $body['included'] ?? [];
-        $warning = array_filter($included, fn($item) => $item['type'] === 'warnings' && $item['id'] === '1');
+        $warning = array_filter($included, fn ($item) => $item['type'] === 'warnings' && $item['id'] === '1');
         $this->assertNotEmpty($warning);
     }
 
@@ -124,7 +124,7 @@ class WarningsOnPostsTest extends TestCase
         // User 2 was warned on post 2, so they should see their warning
         if (isset($body['data']['relationships']['warnings'])) {
             $warningsData = $body['data']['relationships']['warnings']['data'] ?? [];
-            if (!empty($warningsData)) {
+            if (! empty($warningsData)) {
                 $this->assertEquals('2', $warningsData[0]['id']);
             }
         }
@@ -186,7 +186,7 @@ class WarningsOnPostsTest extends TestCase
 
         // Check included post has discussion
         $included = $body['included'] ?? [];
-        $post = array_filter($included, fn($item) => $item['type'] === 'posts' && $item['id'] === '1');
+        $post = array_filter($included, fn ($item) => $item['type'] === 'posts' && $item['id'] === '1');
         $this->assertNotEmpty($post);
 
         $postData = array_values($post)[0];

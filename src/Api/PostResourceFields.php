@@ -29,7 +29,7 @@ class PostResourceFields
                     $author = $post->user;
 
                     // Only show warnings if the actor is the post author or has permission to view warnings
-                    if (!$author || !($actor->id === $author->id || $actor->can('viewWarnings', $author))) {
+                    if (! $author || ! ($actor->id === $author->id || $actor->can('viewWarnings', $author))) {
                         return [];
                     }
 
