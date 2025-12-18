@@ -17,17 +17,23 @@ use Flarum\User\User;
 
 class UserPolicy extends AbstractPolicy
 {
-    /**
-     * @param User $actor
-     * @param $ability
-     * @param User|string $user
-     *
-     * @return bool|null
-     */
-    public function can(User $actor, $ability, $user)
+    public function can(User $actor, string $ability, User|string $user): ?string
     {
-        if ($ability === 'user.viewWarnings' && $user instanceof User && $actor->id == $user->id) {
-            return $this->allow();
+        if ($ability === 'user.viewWarnings' || $ability === 'viewWarnings') {
+            // Users with viewWarnings permission can view any user's warnings
+            if ($actor->hasPermission('user.viewWarnings')) {
+                return $this->allow();
+            }
+
+            // Users can always view their own warnings
+            if ($user instanceof User && $actor->id == $user->id) {
+                return $this->allow();
+            }
+
+            // Explicitly deny if trying to view another user's warnings
+            return $this->deny();
         }
+
+        return null;
     }
 }

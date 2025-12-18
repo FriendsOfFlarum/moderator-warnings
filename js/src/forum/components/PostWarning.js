@@ -1,5 +1,5 @@
 import Component from 'flarum/common/Component';
-import icon from 'flarum/common/helpers/icon';
+import Icon from 'flarum/common/components/Icon';
 import username from 'flarum/common/helpers/username';
 import WarningPreview from './WarningPreview';
 
@@ -14,7 +14,7 @@ export default class PostWarning extends Component {
     return (
       <div className="Post-warning">
         <span className="Post-warning-summary">
-          {icon('fas fa-exclamation-circle')}
+          <Icon name="fas fa-exclamation-circle" />
           {this.warning.strikes()
             ? app.translator.trans('fof-moderator-warnings.forum.post.warning', {
                 strikes: this.warning.strikes() || 0,
