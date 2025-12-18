@@ -1,5 +1,4 @@
 import app from 'flarum/forum/app';
-import NotificationGrid from 'flarum/forum/components/NotificationGrid';
 import { extend } from 'flarum/common/extend';
 import User from 'flarum/common/models/User';
 import Model from 'flarum/common/Model';
@@ -20,7 +19,7 @@ app.initializers.add('fof-moderator-warnings', (app) => {
   addWarningsToPosts();
 
   app.notificationComponents.warning = WarningNotification;
-  extend(NotificationGrid.prototype, 'notificationTypes', function (items) {
+  extend('flarum/forum/components/NotificationGrid', 'notificationTypes', function (items) {
     items.add('warning', {
       name: 'warning',
       icon: 'fas fa-exclamation-circle',
