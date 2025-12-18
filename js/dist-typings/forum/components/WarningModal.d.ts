@@ -1,11 +1,12 @@
-export default class WarningModal extends Modal<import("flarum/common/components/Modal").IInternalModalAttrs, undefined> {
+export default class WarningModal extends FormModal<import("flarum/common/components/FormModal").IFormModalAttrs, undefined> {
     constructor();
     oninit(vnode: any): void;
     publicComment: any;
     privateComment: any;
     strikes: any;
+    title(): any[];
     content(): JSX.Element;
     onsubmit(e: any): void;
-    successAlert: any;
+    successAlert: number | undefined;
 }
-import Modal from "flarum/common/components/Modal";
+import FormModal from "flarum/common/components/FormModal";
