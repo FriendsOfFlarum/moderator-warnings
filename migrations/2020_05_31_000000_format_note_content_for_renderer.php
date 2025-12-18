@@ -20,7 +20,7 @@ return [
         $container = Container::getInstance();
 
         // Get the formatter from the container
-        if (!$container->bound(Formatter::class)) {
+        if (! $container->bound(Formatter::class)) {
             // If formatter is not available, skip migration
             return;
         }
