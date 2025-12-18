@@ -1,7 +1,7 @@
 import app from 'flarum/admin/app';
 
 app.initializers.add('fof-moderator-warnings', () => {
-  app.extensionData
+  app.registry
     .for('fof-moderator-warnings')
     .registerPermission(
       {

@@ -1,7 +1,7 @@
 import Component from 'flarum/common/Component';
 import Dropdown from 'flarum/common/components/Dropdown';
 import Link from 'flarum/common/components/Link';
-import avatar from 'flarum/common/helpers/avatar';
+import Avatar from 'flarum/common/components/Avatar';
 import username from 'flarum/common/helpers/username';
 import humanTime from 'flarum/common/helpers/humanTime';
 import classList from 'flarum/common/utils/classList';
@@ -29,7 +29,7 @@ export default class WarningListItem extends Component {
         <div className="WarningListItem-main">
           <h3 className="WarningListItem-title">
             <Link href={addedByUser ? app.route.user(addedByUser) : '#'} className="WarningListItem-author">
-              {avatar(addedByUser)} {username(addedByUser)}
+              <Avatar user={addedByUser} /> {username(addedByUser)}
             </Link>
           </h3>
           <span class="WarningListItem-strikes">

@@ -1,9 +1,10 @@
-import Modal from 'flarum/common/components/Modal';
+import Form from 'flarum/common/components/Form';
+import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import username from 'flarum/common/helpers/username';
 import Stream from 'flarum/common/utils/Stream';
 
-export default class WarningModal extends Modal {
+export default class WarningModal extends FormModal {
   oninit(vnode) {
     super.oninit(vnode);
 
@@ -23,7 +24,7 @@ export default class WarningModal extends Modal {
   content() {
     return (
       <div className="Modal-body">
-        <div className="Form Form--centered">
+        <Form className="Form--centered">
           <div className="Form-group">
             <div>
               <label>
@@ -57,7 +58,7 @@ export default class WarningModal extends Modal {
               {app.translator.trans('fof-moderator-warnings.forum.warning_modal.submit_button')}
             </Button>
           </div>
-        </div>
+        </Form>
       </div>
     );
   }
