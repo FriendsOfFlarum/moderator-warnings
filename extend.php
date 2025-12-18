@@ -23,6 +23,10 @@ use FoF\ModeratorWarnings\Api\Serializer\WarningSerializer;
 use FoF\ModeratorWarnings\Model\Warning;
 use FoF\ModeratorWarnings\Notification\WarningBlueprint;
 use FoF\ModeratorWarnings\Provider\WarningProvider;
+use Flarum\Api\Context;
+use Flarum\Api\Endpoint;
+use Flarum\Api\Resource;
+use Flarum\Api\Schema;
 
 return [
     (new Extend\Frontend('forum'))
@@ -49,6 +53,7 @@ return [
     (new Extend\Notification())
         ->type(WarningBlueprint::class, ['alert', 'email']),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiSerializer(FlarumSerializer\UserSerializer::class))
         ->attribute('canViewWarnings', function ($serializer, $model) {
             return $model->can('user.viewWarnings');
@@ -63,6 +68,7 @@ return [
             return Warning::where('user_id', $model->id)->where('hidden_at', null)->count();
         }),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiSerializer(FlarumSerializer\BasicPostSerializer::class))
         ->relationship('warnings', function ($serializer, $model) {
             $actor = $serializer->getActor();
@@ -72,6 +78,7 @@ return [
             }
         }),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(FlarumController\ShowDiscussionController::class))
         ->addInclude([
             'posts.warnings',
@@ -79,6 +86,7 @@ return [
             'posts.warnings.addedByUser',
         ]),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiController(FlarumController\ListPostsController::class))
         ->addInclude([
             'warnings',
@@ -91,4 +99,5 @@ return [
 
     (new Extend\ServiceProvider())
         ->register(WarningProvider::class),
+    new Extend\ApiResource(Api\Resource\WarningResource::class),
 ];
