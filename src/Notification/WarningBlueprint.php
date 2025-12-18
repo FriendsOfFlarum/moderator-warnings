@@ -53,7 +53,7 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface, Alertab
      */
     public function getEmailViews(): array
     {
-        return ['text' => 'fof-moderator-warnings::emails.warning'];
+        return ['text' => 'fof-moderator-warnings::email.plain.warning', 'html' => 'fof-moderator-warnings::email.html.warning'];
     }
 
     /**
