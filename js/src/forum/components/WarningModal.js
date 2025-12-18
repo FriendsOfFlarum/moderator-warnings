@@ -74,20 +74,22 @@ export default class WarningModal extends FormModal {
       this.strikes(0);
     }
 
-    const newWarning = {
+    const data = {
       userId: this.attrs.user.id(),
       strikes: this.strikes(),
-      public_comment: this.publicComment(),
-      private_comment: this.privateComment(),
+      publicComment: this.publicComment(),
+      privateComment: this.privateComment(),
     };
 
     if (this.attrs.post) {
-      newWarning.post = this.attrs.post;
+      data.relationships = {
+        post: this.attrs.post,
+      };
     }
 
     app.store
       .createRecord('warnings')
-      .save(newWarning)
+      .save(data)
       .then(this.hide.bind(this))
       .then(
         (this.successAlert = app.alerts.show(

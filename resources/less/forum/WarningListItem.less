@@ -125,15 +125,26 @@
 }
 
 
-[data-theme^=light] {
-  --control-bg-mix-40: mix(@control-bg-light, @body-bg, 40%);
-  --control-bg-mix-70: mix(@control-bg-light, @body-bg, 70%);
-  --control-danger-bg-mix-40: mix(@control-danger-bg-light, @body-bg, 40%);
-  --control-danger-bg-mix-70: mix(@control-danger-bg-light, @body-bg, 70%);
+:root[data-theme^=light] {
+  --control-bg-mix-40: @control-bg-mix-40-light;
+  --control-bg-mix-70: @control-bg-mix-70-light;
+  --control-danger-bg-mix-40: @control-danger-bg-mix-40-light;
+  --control-danger-bg-mix-70: @control-danger-bg-mix-70-light;
 }
-[data-theme^=dark] {
-  --control-bg-mix-40: mix(@control-bg-dark, @body-bg, 40%);
-  --control-bg-mix-70: mix(@control-bg-dark, @body-bg, 70%);
-  --control-danger-bg-mix-40: mix(@control-danger-bg-dark, @body-bg, 40%);
-  --control-danger-bg-mix-70: mix(@control-danger-bg-dark, @body-bg, 70%);
+
+:root[data-theme^=dark] {
+  --control-bg-mix-40: @control-bg-mix-40-dark;
+  --control-bg-mix-70: @control-bg-mix-70-dark;
+  --control-danger-bg-mix-40: @control-danger-bg-mix-40-dark;
+  --control-danger-bg-mix-70: @control-danger-bg-mix-70-dark;
 }
+
+@control-bg-mix-40-light: mix(@control-bg-light, @body-bg-light, 40%);
+@control-bg-mix-70-light: mix(@control-bg-light, @body-bg-light, 70%);
+@control-danger-bg-mix-40-light: mix(@control-danger-bg-light, @body-bg-light, 40%);
+@control-danger-bg-mix-70-light: mix(@control-danger-bg-light, @body-bg-light, 70%);
+
+@control-bg-mix-40-dark: mix(@control-bg-dark, @body-bg-dark, 40%);
+@control-bg-mix-70-dark: mix(@control-bg-dark, @body-bg-dark, 70%);
+@control-danger-bg-mix-40-dark: mix(@control-danger-bg-dark, @body-bg-dark, 40%);
+@control-danger-bg-mix-70-dark: mix(@control-danger-bg-dark, @body-bg-dark, 70%);

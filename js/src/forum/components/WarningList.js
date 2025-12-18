@@ -82,7 +82,7 @@ export default class WarningList extends Component {
 
   refresh() {
     return app.store
-      .find('warnings', this.user.id())
+      .find('warnings', { filter: { userId: this.user.id() } })
       .catch(() => {})
       .then((results) => {
         this.warnings = [];

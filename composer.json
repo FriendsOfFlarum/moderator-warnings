@@ -12,7 +12,7 @@
         "forum": "https://discuss.flarum.org/d/38529-friendsofflarum-moderator-warnings"
     },
     "require": {
-        "flarum/core": "^2.0.0-beta"
+        "flarum/core": "^2.0.0"
     },
     "replace": {
         "askvortsov/flarum-moderator-warnings": "*"
@@ -86,7 +86,9 @@
         "test:setup": "Sets up a database for use with integration tests. Execute this only once."
     },
     "require-dev": {
-        "flarum/testing": "^2.0.0-beta",
-        "flarum/phpstan": "^2.0.0-beta"
-    }
+        "flarum/testing": "^2.0.0",
+        "flarum/phpstan": "^2.0.0"
+    },
+    "minimum-stability": "beta",
+    "prefer-stable": true
 }

@@ -55,12 +55,12 @@ export default class WarningListItem extends Component {
             )}
             <li className="item-excerpt">
               <h3 className="WarningListItem-subtitle">{app.translator.trans('fof-moderator-warnings.forum.warning_list_item.public_comment')}</h3>
-              <p class="WarningListItem-comment">{m.trust(warning.public_comment())}</p>
+              <p class="WarningListItem-comment">{m.trust(warning.publicComment())}</p>
             </li>
-            {app.session.user.canManageWarnings() && warning.private_comment() ? (
+            {app.session.user.canManageWarnings() && warning.privateComment() ? (
               <li className="item-excerpt">
                 <h3 className="WarningListItem-subtitle">{app.translator.trans('fof-moderator-warnings.forum.warning_list_item.private_comment')}</h3>
-                <p class="WarningListItem-comment">{m.trust(warning.private_comment())}</p>
+                <p class="WarningListItem-comment">{m.trust(warning.privateComment())}</p>
               </li>
             ) : (
               ''

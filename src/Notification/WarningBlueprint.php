@@ -53,7 +53,7 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface, Alertab
      */
     public function getEmailViews(): array
     {
-        return ['text' => 'fof-moderator-warnings::email.plain.warning', 'html' => 'fof-moderator-warnings::email.html.warning'];
+        return ['text' => 'fof-moderator-warnings::emails.plain.warning', 'html' => 'fof-moderator-warnings::emails.html.warning'];
     }
 
     /**
@@ -68,12 +68,12 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface, Alertab
         ]);
     }
 
-    public function getTranslation()
+    public function getTranslation(): string
     {
         return 'fof-moderator-warnings.emails.'.($this->warning->post_id ? 'post_warned' : 'user_warned');
     }
 
-    public function getUnparsedComment()
+    public function getUnparsedComment(): string
     {
         return Warning::getFormatter()->unparse($this->warning->public_comment);
     }
