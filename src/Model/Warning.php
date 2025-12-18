@@ -40,7 +40,7 @@ class Warning extends AbstractModel
 
     protected $table = 'warnings';
 
-    protected $dates = ['created_at', 'hidden_at'];
+    protected $casts = ['created_at' => 'datetime', 'hidden_at' => 'datetime'];
 
     /**
      * The text formatter instance.

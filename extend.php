@@ -47,7 +47,7 @@ return [
         ->namespace('fof-moderator-warnings', __DIR__.'/views'),
 
     (new Extend\Notification())
-        ->type(WarningBlueprint::class, WarningSerializer::class, ['alert', 'email']),
+        ->type(WarningBlueprint::class, ['alert', 'email']),
 
     (new Extend\ApiSerializer(FlarumSerializer\UserSerializer::class))
         ->attribute('canViewWarnings', function ($serializer, $model) {

@@ -12,27 +12,22 @@
 
 namespace FoF\ModeratorWarnings\Notification;
 
+use Flarum\Notification\AlertableInterface;
 use Flarum\Notification\Blueprint\BlueprintInterface;
 use Flarum\Notification\MailableInterface;
 use FoF\ModeratorWarnings\Model\Warning;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class WarningBlueprint implements BlueprintInterface, MailableInterface
+class WarningBlueprint implements BlueprintInterface, MailableInterface, AlertableInterface
 {
-    /**
-     * @var Warning
-     */
-    public $warning;
-
-    public function __construct(Warning $warning)
+    public function __construct(public Warning $warning)
     {
-        $this->warning = $warning;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSubject()
+    public function getSubject(): ?\Flarum\Database\AbstractModel
     {
         return $this->warning;
     }
@@ -40,7 +35,7 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface
     /**
      * {@inheritdoc}
      */
-    public function getFromUser()
+    public function getFromUser(): ?\Flarum\User\User
     {
         return $this->warning->addedByUser;
     }
@@ -48,14 +43,15 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
+        return [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getEmailView()
+    public function getEmailViews(): array
     {
         return ['text' => 'fof-moderator-warnings::emails.warning'];
     }
@@ -63,7 +59,7 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface
     /**
      * {@inheritdoc}
      */
-    public function getEmailSubject(TranslatorInterface $translator)
+    public function getEmailSubject(\Flarum\Locale\TranslatorInterface $translator): string
     {
         return $translator->trans($this->getTranslation().'.subject', [
             '{warner_display_name}' => $this->warning->addedByUser->display_name,
@@ -85,7 +81,7 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface
     /**
      * {@inheritdoc}
      */
-    public static function getType()
+    public static function getType(): string
     {
         return 'warning';
     }
@@ -93,7 +89,7 @@ class WarningBlueprint implements BlueprintInterface, MailableInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubjectModel()
+    public static function getSubjectModel(): string
     {
         return Warning::class;
     }

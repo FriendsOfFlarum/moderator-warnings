@@ -28,23 +28,9 @@ use Tobscure\JsonApi\Document;
 class CreateWarningController extends AbstractCreateController
 {
     public $serializer = WarningSerializer::class;
-    /**
-     * @var NotificationSyncer
-     */
-    protected $notifications;
 
-    /**
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
-     * @param NotificationSyncer $notifications
-     */
-    public function __construct(NotificationSyncer $notifications, Translator $translator)
+    public function __construct(protected NotificationSyncer $notifications, protected Translator $translator)
     {
-        $this->notifications = $notifications;
-        $this->translator = $translator;
     }
 
     /**
