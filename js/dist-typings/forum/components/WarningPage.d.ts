@@ -1,6 +1,6 @@
-export default class WarningPage extends UserPage<import("flarum/forum/components/UserPage").IUserPageAttrs, undefined> {
-    constructor();
-    oninit(vnode: any): void;
-    content(): JSX.Element | undefined;
+import UserPage from 'flarum/forum/components/UserPage';
+import type Mithril from 'mithril';
+export default class WarningPage extends UserPage {
+    oninit(vnode: Mithril.Vnode): void;
+    content(): JSX.Element;
 }
-import UserPage from "flarum/forum/components/UserPage";
