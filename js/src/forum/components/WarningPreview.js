@@ -1,3 +1,4 @@
+import app from 'flarum/forum/app';
 import Component from 'flarum/common/Component';
 import Link from 'flarum/common/components/Link';
 import WarningListItem from './WarningListItem';

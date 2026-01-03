@@ -4,8 +4,6 @@ import PostControls from 'flarum/forum/utils/PostControls';
 import UserControls from 'flarum/forum/utils/UserControls';
 import Button from 'flarum/common/components/Button';
 
-import WarningModal from './components/WarningModal';
-
 export default function () {
   extend(PostControls, 'moderationControls', function (items, post) {
     if (!app.session.user || !app.session.user.canManageWarnings()) return;
@@ -15,7 +13,7 @@ export default function () {
       <Button
         icon="fas fa-exclamation-circle"
         onclick={() =>
-          app.modal.show(WarningModal, {
+          app.modal.show(() => import('./components/WarningModal'), {
             callback: () => {
               location.reload();
             },
@@ -37,7 +35,7 @@ export default function () {
       <Button
         icon="fas fa-exclamation-circle"
         onclick={() =>
-          app.modal.show(WarningModal, {
+          app.modal.show(() => import('./components/WarningModal'), {
             callback: () => {
               location.reload();
             },

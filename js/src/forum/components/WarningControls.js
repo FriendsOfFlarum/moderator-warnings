@@ -1,3 +1,4 @@
+import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import Separator from 'flarum/common/components/Separator';
 import ItemList from 'flarum/common/utils/ItemList';

@@ -1,3 +1,4 @@
+import app from 'flarum/forum/app';
 import Form from 'flarum/common/components/Form';
 import FormModal from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
