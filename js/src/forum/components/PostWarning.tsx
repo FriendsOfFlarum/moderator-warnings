@@ -1,10 +1,19 @@
-import Component from 'flarum/common/Component';
+import app from 'flarum/forum/app';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import Icon from 'flarum/common/components/Icon';
 import username from 'flarum/common/helpers/username';
 import WarningPreview from './WarningPreview';
+import type Mithril from 'mithril';
+import type Warning from '../model/Warning';
 
-export default class PostWarning extends Component {
-  oninit(vnode) {
+export interface PostWarningAttrs extends ComponentAttrs {
+  warning: Warning;
+}
+
+export default class PostWarning<CustomAttrs extends PostWarningAttrs = PostWarningAttrs> extends Component<CustomAttrs> {
+  warning!: Warning;
+
+  oninit(vnode: Mithril.Vnode<CustomAttrs, this>) {
     super.oninit(vnode);
 
     this.warning = this.attrs.warning;
@@ -28,12 +37,12 @@ export default class PostWarning extends Component {
     );
   }
 
-  oncreate(vnode) {
+  oncreate(vnode: Mithril.VnodeDOM<CustomAttrs, this>) {
     super.oncreate(vnode);
 
     const warning = this.warning;
 
-    let timeout;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
 
     const hidePreview = () => {
       this.$('.Post-warning-preview')
@@ -57,7 +66,12 @@ export default class PostWarning extends Component {
             // When the user hovers their mouse over the list of people who have
             // replied to the post, render a list of reply previews into a
             // popup.
-            m.render($preview[0], <li data-id={warning.id()}>{WarningPreview.component({ warning })}</li>);
+            m.render(
+              $preview[0],
+              <li data-id={warning.id()}>
+                <WarningPreview warning={warning} />
+              </li>
+            );
             $preview.show();
             setTimeout(() => $preview.off('transitionend').addClass('in'));
           }, 200);
