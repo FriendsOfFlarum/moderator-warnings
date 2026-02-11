@@ -18,8 +18,8 @@ use FoF\ModeratorWarnings\Model\Warning;
 
 class WarningProvider extends AbstractServiceProvider
 {
-    public function register()
+    public function boot(Formatter $formatter)
     {
-        Warning::setFormatter($this->container->make(Formatter::class));
+        Warning::setFormatter($formatter);
     }
 }
