@@ -39,18 +39,18 @@ class CanViewWarningsAttributeTest extends TestCase
             User::class => [
                 $this->normalUser(),
                 [
-                    'id'                 => 3,
-                    'username'           => 'regular3',
-                    'email'              => 'regular3@machine.local',
+                    'id' => 3,
+                    'username' => 'regular3',
+                    'email' => 'regular3@machine.local',
                     'is_email_confirmed' => 1,
-                    'password'           => 'foobar',
+                    'password' => 'foobar',
                 ],
                 [
-                    'id'                 => 4,
-                    'username'           => 'moderator4',
-                    'email'              => 'moderator4@machine.local',
+                    'id' => 4,
+                    'username' => 'moderator4',
+                    'email' => 'moderator4@machine.local',
                     'is_email_confirmed' => 1,
-                    'password'           => 'foobar',
+                    'password' => 'foobar',
                 ],
             ],
             Group::class => [
