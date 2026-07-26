@@ -1,12 +1,13 @@
 <?php
 
 /*
- * This file is part of fof/moderator-warnings.
+ * This file is part of fof/moderator-warnings
  *
- * Copyright (c) FriendsOfFlarum.
+ * Copyright (c) Alexander Skvortsov.
+ * Copyright (c) FriendsOfFlarum
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+ * For detailed copyright and license information, please view the
+ * LICENSE file that was distributed with this source code.
  */
 
 namespace FoF\ModeratorWarnings\Tests\integration\api;
@@ -43,21 +44,21 @@ class WarningCountQueryCountTest extends TestCase
             $userId = 3 + $i;
 
             $users[] = [
-                'id'                 => $userId,
-                'username'           => 'poster'.$userId,
-                'email'              => 'poster'.$userId.'@machine.local',
+                'id' => $userId,
+                'username' => 'poster'.$userId,
+                'email' => 'poster'.$userId.'@machine.local',
                 'is_email_confirmed' => 1,
-                'password'           => 'foobar',
+                'password' => 'foobar',
             ];
 
             $discussions[] = [
-                'id'                  => 1 + $i,
-                'title'               => 'Discussion '.$i,
-                'created_at'          => Carbon::createFromDate(2024, 1, 1 + $i)->toDateTimeString(),
-                'last_posted_at'      => Carbon::createFromDate(2024, 1, 1 + $i)->toDateTimeString(),
-                'user_id'             => $userId,
+                'id' => 1 + $i,
+                'title' => 'Discussion '.$i,
+                'created_at' => Carbon::createFromDate(2024, 1, 1 + $i)->toDateTimeString(),
+                'last_posted_at' => Carbon::createFromDate(2024, 1, 1 + $i)->toDateTimeString(),
+                'user_id' => $userId,
                 'last_posted_user_id' => $userId,
-                'comment_count'       => 1,
+                'comment_count' => 1,
             ];
         }
 
@@ -68,23 +69,23 @@ class WarningCountQueryCountTest extends TestCase
                 // One visible and one hidden warning for the first author:
                 // only the visible one may be counted.
                 [
-                    'id'              => 1,
-                    'user_id'         => 3,
+                    'id' => 1,
+                    'user_id' => 3,
                     'created_user_id' => 1,
-                    'strikes'         => 1,
-                    'public_comment'  => 'Visible warning',
+                    'strikes' => 1,
+                    'public_comment' => 'Visible warning',
                     'private_comment' => 'Visible warning',
-                    'created_at'      => Carbon::parse('2024-01-01')->toDateTimeString(),
+                    'created_at' => Carbon::parse('2024-01-01')->toDateTimeString(),
                 ],
                 [
-                    'id'              => 2,
-                    'user_id'         => 3,
+                    'id' => 2,
+                    'user_id' => 3,
                     'created_user_id' => 1,
-                    'strikes'         => 1,
-                    'public_comment'  => 'Hidden warning',
+                    'strikes' => 1,
+                    'public_comment' => 'Hidden warning',
                     'private_comment' => 'Hidden warning',
-                    'created_at'      => Carbon::parse('2024-01-02')->toDateTimeString(),
-                    'hidden_at'       => Carbon::parse('2024-01-03')->toDateTimeString(),
+                    'created_at' => Carbon::parse('2024-01-02')->toDateTimeString(),
+                    'hidden_at' => Carbon::parse('2024-01-03')->toDateTimeString(),
                 ],
             ],
         ]);
