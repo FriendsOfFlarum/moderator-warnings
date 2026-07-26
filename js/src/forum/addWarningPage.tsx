@@ -9,7 +9,12 @@ export default function addWarningPage() {
   extend(UserPage.prototype, 'navItems', function (items: ItemList<Mithril.Children>) {
     const user = this.user;
 
-    if (app.session.user && user && (app.session.user.canViewWarnings() || (user.id() === app.session.user.id() && user.visibleWarningCount() > 0))) {
+    // canViewWarnings is relative to the profile user: true for moderators on
+    // any profile, but also always true on the actor's own profile. So on
+    // one's own profile, only show the link once there are visible warnings.
+    const isSelf = user && app.session.user && user.id() === app.session.user.id();
+
+    if (app.session.user && user && user.canViewWarnings() && (!isSelf || user.visibleWarningCount() > 0)) {
       items.add(
         'warnings',
         <LinkButton
