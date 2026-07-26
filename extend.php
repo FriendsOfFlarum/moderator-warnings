@@ -28,6 +28,7 @@ use FoF\ModeratorWarnings\Notification\WarningBlueprint;
 use FoF\ModeratorWarnings\Provider\WarningProvider;
 use FoF\ModeratorWarnings\Search\Filter\UserIdFilter;
 use FoF\ModeratorWarnings\Search\WarningSearcher;
+use Illuminate\Database\Eloquent\Builder;
 
 return [
     (new Extend\Frontend('forum'))
@@ -44,6 +45,9 @@ return [
     (new Extend\Model(Post::class))
         ->hasMany('warnings', Warning::class, 'post_id'),
 
+    (new Extend\Model(User::class))
+        ->hasMany('warnings', Warning::class, 'user_id'),
+
     (new Extend\View())
         ->namespace('fof-moderator-warnings', __DIR__.'/views'),
 
@@ -59,7 +63,11 @@ return [
             Schema\Boolean::make('canDeleteWarnings')
                 ->get(fn (User $user, Context $context) => $context->getActor()->can('user.deleteWarnings')),
             Schema\Integer::make('visibleWarningCount')
-                ->get(fn (User $user) => Warning::where('user_id', $user->id)->where('hidden_at', null)->count()),
+                // Batched into one aggregate query for all serialized users,
+                // instead of one COUNT query per user.
+                ->countRelation('warnings', function (Builder $query) {
+                    $query->whereNull('hidden_at');
+                }),
         ]),
 
     (new Extend\ApiResource(Resource\PostResource::class))
