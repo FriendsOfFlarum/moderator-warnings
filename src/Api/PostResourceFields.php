@@ -24,17 +24,24 @@ class PostResourceFields
             Schema\Relationship\ToMany::make('warnings')
                 ->type('warnings')
                 ->includable()
-                ->get(function (Post $post, Context $context) {
+                // No `get()` callback: that would load the relationship per
+                // post, and since this is a default include on the posts
+                // endpoints it meant one query per post on every page. Left to
+                // the relationship loader, all posts on the page are batched
+                // into one query.
+                ->scope(function ($query, Context $context) {
+                    $query->whereVisibleTo($context->getActor());
+                })
+                // Whether warnings may be seen at all depends on the post's
+                // author, so it is decided per post rather than in the query.
+                // Both checks are deliberately cheap: the global permission is
+                // resolved once for the actor, and authorship is compared by
+                // foreign key so the author (and their groups) are never
+                // loaded on behalf of this field.
+                ->visible(function (Post $post, Context $context) {
                     $actor = $context->getActor();
-                    $author = $post->user;
 
-                    // Only show warnings if the actor is the post author or has permission to view warnings
-                    if (! $author || ! ($actor->id === $author->id || $actor->can('viewWarnings', $author))) {
-                        return [];
-                    }
-
-                    // Load warnings with visibility scope applied
-                    return $post->warnings()->whereVisibleTo($actor)->get()->all();
+                    return $actor->id === $post->user_id || $actor->hasPermission('user.viewWarnings');
                 }),
         ];
     }
