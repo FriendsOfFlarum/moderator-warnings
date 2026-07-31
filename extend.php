@@ -73,7 +73,14 @@ return [
     (new Extend\ApiResource(Resource\PostResource::class))
         ->fields(PostResourceFields::class)
         ->endpoint([Endpoint\Index::class, Endpoint\Show::class], function (Endpoint\Index|Endpoint\Show $endpoint) {
-            return $endpoint->addDefaultInclude(['warnings', 'warnings.warnedUser', 'warnings.addedByUser']);
+            // Eager-load the warnings' own relations alongside the include:
+            // without this each warning loads its users (and their groups)
+            // individually while being serialized.
+            return $endpoint
+                ->addDefaultInclude(['warnings', 'warnings.warnedUser', 'warnings.addedByUser'])
+                ->eagerLoadWhenIncluded([
+                    'warnings' => ['warnings.warnedUser', 'warnings.addedByUser'],
+                ]);
         }),
 
     (new Extend\Policy())
