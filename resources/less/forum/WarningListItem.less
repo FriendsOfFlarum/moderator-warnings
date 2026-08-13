@@ -114,6 +114,13 @@
   opacity: 0;
   transition: opacity 0.2s;
 
+  // The dropdown always renders so its DOM node keeps a stable identity across
+  // redraws; when there are no controls to offer, it is hidden rather than
+  // unmounted.
+  &.hidden {
+    display: none;
+  }
+
   .Dropdown-toggle {
     display: block;
   }

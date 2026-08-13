@@ -6,10 +6,26 @@ import Avatar from 'flarum/common/components/Avatar';
 import username from 'flarum/common/helpers/username';
 import humanTime from 'flarum/common/helpers/humanTime';
 import classList from 'flarum/common/utils/classList';
+import SubtreeRetainer from 'flarum/common/utils/SubtreeRetainer';
 import WarningPost from './WarningPost';
 import WarningControls from './WarningControls';
 
 export default class WarningListItem extends Component {
+  oninit(vnode) {
+    super.oninit(vnode);
+
+    this.subtree = new SubtreeRetainer(
+      () => this.attrs.warning.freshness,
+      () => this.attrs.warning.isHidden()
+    );
+  }
+
+  onbeforeupdate(vnode) {
+    super.onbeforeupdate(vnode);
+
+    return this.subtree.needsRebuild();
+  }
+
   view() {
     const { warning } = this.attrs;
     const addedByUser = warning.addedByUser();
@@ -17,16 +33,14 @@ export default class WarningListItem extends Component {
 
     return (
       <div {...this.elementAttrs()}>
-        {controls.length
-          ? Dropdown.component(
-              {
-                icon: 'fas fa-ellipsis-v',
-                className: 'WarningListItem-controls',
-                buttonClassName: 'Button Button--icon Button--flat Slidable-underneath Slidable-underneath--right',
-              },
-              controls
-            )
-          : ''}
+        {Dropdown.component(
+          {
+            icon: 'fas fa-ellipsis-v',
+            className: classList('WarningListItem-controls', { hidden: !controls.length }),
+            buttonClassName: 'Button Button--icon Button--flat Slidable-underneath Slidable-underneath--right',
+          },
+          controls
+        )}
         <div className="WarningListItem-main">
           <h3 className="WarningListItem-title">
             <Link href={addedByUser ? app.route.user(addedByUser) : '#'} className="WarningListItem-author">
