@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @property Carbon $created_at
- * @property Carbon $hidden_at
+ * @property Carbon|null $hidden_at
  * @property User $addedByUser
  * @property User $warnedUser
  * @property User|null $hiddenByUser
@@ -110,7 +110,6 @@ class Warning extends AbstractModel
     public function restore(): static
     {
         if ($this->hidden_at !== null) {
-            /** @phpstan-ignore-next-line */
             $this->hidden_at = null;
             $this->hidden_user_id = null;
         }
