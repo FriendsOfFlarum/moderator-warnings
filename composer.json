@@ -42,7 +42,10 @@
                 "name": "fas fa-exclamation-circle",
                 "backgroundColor": "#e74c3c",
                 "color": "#fff"
-            }
+            },
+            "optional-dependencies": [
+                "flarum/audit"
+            ]
         },
         "flarum-cli": {
             "modules": {
@@ -87,7 +90,8 @@
     },
     "require-dev": {
         "flarum/testing": "^2.0.0",
-        "flarum/phpstan": "^2.0.0"
+        "flarum/phpstan": "^2.0.0",
+        "flarum/audit": "^2.0.0"
     },
     "minimum-stability": "beta",
     "prefer-stable": true
