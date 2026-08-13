@@ -1,43 +1,43 @@
-export default class WarningList extends Component<any, undefined> {
-    constructor();
-    oninit(vnode: any): void;
-    loading: boolean | undefined;
-    warnings: any;
-    user: any;
+import Component, { ComponentAttrs } from 'flarum/common/Component';
+import ItemList from 'flarum/common/utils/ItemList';
+import type Warning from '../model/Warning';
+import type User from 'flarum/common/models/User';
+import type Mithril from 'mithril';
+export interface IWarningListAttrs extends ComponentAttrs {
+    params: {
+        user: User;
+        sort?: string;
+    };
+}
+export default class WarningList<CustomAttrs extends IWarningListAttrs = IWarningListAttrs> extends Component<CustomAttrs> {
+    loading: boolean;
+    warnings: Warning[];
+    user: User;
+    oninit(vnode: Mithril.Vnode<CustomAttrs, this>): void;
     view(): JSX.Element;
-    actionItems(): ItemList<any>;
+    actionItems(): ItemList<Mithril.Children>;
     /**
      * The children of the warnings list, every one of them keyed.
-     *
-     * @return {import('mithril').Children[]}
      */
-    warningItems(): import('mithril').Children[];
+    warningItems(): Mithril.Children[];
     /**
      * Renderable warnings, skipping entries the store no longer holds.
-     *
-     * @return {Warning[]}
      */
     visibleWarnings(): Warning[];
-    strikeCount(): any;
-    parseResults(results: any): any;
+    strikeCount(): number;
+    parseResults(results: Warning[]): Warning[];
     refresh(): Promise<void>;
     /**
      * Show a newly created warning without refetching the list.
-     *
-     * @param {Warning} warning
      */
-    addWarning(warning: Warning): void;
+    addWarning(warning: Warning | null | undefined): void;
     /**
      * Drop a deleted warning from the list without reloading the page.
-     *
-     * @param {Warning} warning
      */
-    removeWarning(warning: Warning): void;
+    removeWarning(warning: Warning | null | undefined): void;
     /**
      * Keep the profile badge in step with the list.
      */
     syncWarningCount(): void;
-    handleOnClickCreate(e: any): void;
+    handleOnClickCreate(e: MouseEvent): void;
 }
-import Component from "flarum/common/Component";
-import ItemList from "flarum/common/utils/ItemList";

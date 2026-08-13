@@ -1,62 +1,52 @@
-declare namespace _default {
+import ItemList from 'flarum/common/utils/ItemList';
+import type Warning from '../model/Warning';
+import type Mithril from 'mithril';
+/**
+ * The component the controls are rendered under, exposing the callbacks the
+ * actions report back through.
+ */
+export interface WarningControlsContext {
+    loading?: boolean;
+    attrs: {
+        ondelete?: (warning: Warning) => void;
+        onchange?: (warning: Warning) => void;
+    };
+}
+/**
+ * The `WarningControls` utility constructs a list of buttons for a warning which
+ * perform actions on it.
+ */
+declare const _default: {
     /**
      * Get a list of controls for a warning.
      *
-     * @param {Warning} warning
-     * @param {*} context The parent component under which the controls menu will
+     * @param context The parent component under which the controls menu will
      *     be displayed.
-     * @return {ItemList}
-     * @public
      */
-    function controls(warning: Warning, context: any): ItemList<any>;
+    controls(warning: Warning, context: WarningControlsContext): ItemList<Mithril.Children>;
     /**
      * Get controls for a warning pertaining to the current user (e.g. report).
-     *
-     * @param {Warning} warning
-     * @param {*} context The parent component under which the controls menu will
-     *     be displayed.
-     * @return {ItemList}
-     * @protected
      */
-    function userControls(warning: Warning, context: any): ItemList<any>;
+    userControls(_warning: Warning, _context: WarningControlsContext): ItemList<Mithril.Children>;
     /**
      * Get controls for a warning pertaining to moderation (e.g. edit).
-     *
-     * @param {Warning} warning
-     * @param {*} context The parent component under which the controls menu will
-     *     be displayed.
-     * @return {ItemList}
-     * @protected
      */
-    function moderationControls(warning: Warning, context: any): ItemList<any>;
+    moderationControls(_warning: Warning, _context: WarningControlsContext): ItemList<Mithril.Children>;
     /**
      * Get controls for a warning that are destructive (e.g. delete).
-     *
-     * @param {Warning} warning
-     * @param {*} context The parent component under which the controls menu will
-     *     be displayed.
-     * @return {ItemList}
-     * @protected
      */
-    function destructiveControls(warning: Warning, context: any): ItemList<any>;
+    destructiveControls(warning: Warning, context: WarningControlsContext): ItemList<Mithril.Children>;
     /**
      * Hide a warning.
-     *
-     * @return {Promise}
      */
-    function hideAction(context: any): Promise<any>;
+    hideAction(this: Warning, context?: WarningControlsContext): Promise<void>;
     /**
      * Restore a warning.
-     *
-     * @return {Promise}
      */
-    function restoreAction(context: any): Promise<any>;
+    restoreAction(this: Warning, context?: WarningControlsContext): Promise<void>;
     /**
      * Delete a warning.
-     *
-     * @return {Promise}
      */
-    function deleteAction(context: any): Promise<any>;
-}
+    deleteAction(this: Warning, context?: WarningControlsContext): Promise<void>;
+};
 export default _default;
-import ItemList from "flarum/common/utils/ItemList";

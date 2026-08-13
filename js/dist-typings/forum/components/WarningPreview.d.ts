@@ -1,7 +1,11 @@
-export default class WarningPreview extends Component<any, undefined> {
-    constructor();
-    oninit(vnode: any): void;
-    warning: any;
+import Component, { ComponentAttrs } from 'flarum/common/Component';
+import type Warning from '../model/Warning';
+import type Mithril from 'mithril';
+export interface IWarningPreviewAttrs extends ComponentAttrs {
+    warning: Warning;
+}
+export default class WarningPreview<CustomAttrs extends IWarningPreviewAttrs = IWarningPreviewAttrs> extends Component<CustomAttrs> {
+    warning: Warning;
+    oninit(vnode: Mithril.Vnode<CustomAttrs, this>): void;
     view(): JSX.Element;
 }
-import Component from "flarum/common/Component";
