@@ -1,14 +1,28 @@
-import Component from 'flarum/common/Component';
 import app from 'flarum/forum/app';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import WarningListItem from './WarningListItem';
 import Button from 'flarum/common/components/Button';
 import WarningModal from './WarningModal';
 import listItems from 'flarum/common/helpers/listItems';
 import ItemList from 'flarum/common/utils/ItemList';
+import type Warning from '../model/Warning';
+import type User from 'flarum/common/models/User';
+import type Mithril from 'mithril';
 
-export default class WarningList extends Component {
-  oninit(vnode) {
+export interface IWarningListAttrs extends ComponentAttrs {
+  params: {
+    user: User;
+    sort?: string;
+  };
+}
+
+export default class WarningList<CustomAttrs extends IWarningListAttrs = IWarningListAttrs> extends Component<CustomAttrs> {
+  loading = true;
+  warnings: Warning[] = [];
+  user!: User;
+
+  oninit(vnode: Mithril.Vnode<CustomAttrs, this>) {
     super.oninit(vnode);
     this.loading = true;
     this.warnings = [];
@@ -30,7 +44,7 @@ export default class WarningList extends Component {
             ? app.translator.trans('fof-moderator-warnings.forum.warning_list.warnings', { strikes: this.strikeCount() || 0 })
             : app.translator.trans('fof-moderator-warnings.forum.warning_list.warnings_no_strikes')}
         </h1>
-        <div class="Warnings-toolbar">
+        <div className="Warnings-toolbar">
           <ul className="Warnings-toolbar-action">{listItems(this.actionItems().toArray())}</ul>
         </div>
         <ul className="WarningList-Warnings">{this.warningItems()}</ul>
@@ -39,10 +53,10 @@ export default class WarningList extends Component {
     );
   }
 
-  actionItems() {
-    const items = new ItemList();
+  actionItems(): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
 
-    if (app.session.user.canManageWarnings()) {
+    if (app.session.user?.canManageWarnings()) {
       items.add(
         'create_warning',
         <Button className="Button Button--primary" onclick={this.handleOnClickCreate.bind(this)}>
@@ -56,11 +70,9 @@ export default class WarningList extends Component {
 
   /**
    * The children of the warnings list, every one of them keyed.
-   *
-   * @return {import('mithril').Children[]}
    */
-  warningItems() {
-    const items = this.visibleWarnings().map((warning) => (
+  warningItems(): Mithril.Children[] {
+    const items: Mithril.Children[] = this.visibleWarnings().map((warning) => (
       <li key={`warning${warning.id()}`} data-id={warning.id()}>
         {WarningListItem.component({
           warning,
@@ -85,22 +97,20 @@ export default class WarningList extends Component {
 
   /**
    * Renderable warnings, skipping entries the store no longer holds.
-   *
-   * @return {Warning[]}
    */
-  visibleWarnings() {
+  visibleWarnings(): Warning[] {
     return this.warnings.filter((warning) => warning && typeof warning.id === 'function');
   }
 
-  strikeCount() {
+  strikeCount(): number {
     return this.visibleWarnings()
       .filter((warning) => !warning.isHidden())
       .map((warning) => warning.strikes())
       .reduce((a, b) => a + b, 0);
   }
 
-  parseResults(results) {
-    [].push.apply(this.warnings, [...results].filter(Boolean));
+  parseResults(results: Warning[]): Warning[] {
+    this.warnings.push(...results.filter(Boolean));
     this.loading = false;
     m.redraw();
 
@@ -110,7 +120,7 @@ export default class WarningList extends Component {
   refresh() {
     this.loading = true;
 
-    return app.store.find('warnings', { filter: { userId: this.user.id() } }).then(
+    return app.store.find<Warning[]>('warnings', { filter: { userId: this.user.id()! } }).then(
       (results) => {
         this.warnings = [];
         this.parseResults(results);
@@ -124,10 +134,8 @@ export default class WarningList extends Component {
 
   /**
    * Show a newly created warning without refetching the list.
-   *
-   * @param {Warning} warning
    */
-  addWarning(warning) {
+  addWarning(warning: Warning | null | undefined) {
     if (!warning || typeof warning.id !== 'function') return;
 
     // The list is sorted newest-first, so a new warning belongs at the top.
@@ -140,10 +148,8 @@ export default class WarningList extends Component {
 
   /**
    * Drop a deleted warning from the list without reloading the page.
-   *
-   * @param {Warning} warning
    */
-  removeWarning(warning) {
+  removeWarning(warning: Warning | null | undefined) {
     if (!warning || typeof warning.id !== 'function') return;
 
     const id = warning.id();
@@ -164,7 +170,7 @@ export default class WarningList extends Component {
     });
   }
 
-  handleOnClickCreate(e) {
+  handleOnClickCreate(e: MouseEvent) {
     e.preventDefault();
     app.modal.show(WarningModal, {
       callback: this.addWarning.bind(this),

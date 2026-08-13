@@ -1,12 +1,28 @@
 import app from 'flarum/forum/app';
 import Form from 'flarum/common/components/Form';
-import FormModal from 'flarum/common/components/FormModal';
+import FormModal, { IFormModalAttrs } from 'flarum/common/components/FormModal';
 import Button from 'flarum/common/components/Button';
 import username from 'flarum/common/helpers/username';
 import Stream from 'flarum/common/utils/Stream';
+import type Warning from '../model/Warning';
+import type User from 'flarum/common/models/User';
+import type Post from 'flarum/common/models/Post';
+import type { AlertIdentifier } from 'flarum/common/states/AlertManagerState';
+import type Mithril from 'mithril';
 
-export default class WarningModal extends FormModal {
-  oninit(vnode) {
+export interface IWarningModalAttrs extends IFormModalAttrs {
+  user: User;
+  post?: Post;
+  callback?: (warning: Warning) => void;
+}
+
+export default class WarningModal<CustomAttrs extends IWarningModalAttrs = IWarningModalAttrs> extends FormModal<CustomAttrs> {
+  publicComment!: Stream<string>;
+  privateComment!: Stream<string>;
+  strikes!: Stream<number>;
+  successAlert?: AlertIdentifier;
+
+  oninit(vnode: Mithril.Vnode<CustomAttrs, this>) {
     super.oninit(vnode);
 
     this.publicComment = Stream('');
@@ -64,10 +80,12 @@ export default class WarningModal extends FormModal {
     );
   }
 
-  onsubmit(e) {
+  onsubmit(e: SubmitEvent) {
     e.preventDefault();
 
-    app.alerts.dismiss(this.successAlert);
+    if (this.successAlert != null) {
+      app.alerts.dismiss(this.successAlert);
+    }
 
     this.loading = true;
 
@@ -75,7 +93,7 @@ export default class WarningModal extends FormModal {
       this.strikes(0);
     }
 
-    const data = {
+    const data: Record<string, unknown> = {
       userId: this.attrs.user.id(),
       strikes: this.strikes(),
       publicComment: this.publicComment(),
@@ -89,7 +107,7 @@ export default class WarningModal extends FormModal {
     }
 
     app.store
-      .createRecord('warnings')
+      .createRecord<Warning>('warnings')
       .save(data)
       .then((warning) => {
         this.hide();
@@ -101,7 +119,7 @@ export default class WarningModal extends FormModal {
 
         // The warning now appears immediately, so the confirmation is a transient
         // acknowledgement rather than something the user has to act on.
-        setTimeout(() => app.alerts.dismiss(this.successAlert), 5000);
+        setTimeout(() => app.alerts.dismiss(this.successAlert!), 5000);
 
         // Hand the saved warning to the caller so it can be shown in place
         // rather than the page being reloaded to pick it up.
