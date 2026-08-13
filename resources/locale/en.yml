@@ -67,3 +67,23 @@ fof-moderator-warnings:
       public_comment_heading: Why is <strong>{username}</strong> receiving these warnings? These comments will be visible to the user and other moderators.
       private_comment_heading: Why is <strong>{username}</strong> receiving these warnings? These comments will ONLY be visible to other moderators.
       submit_button: Save warning
+
+# Messages for the optional flarum/audit integration. AuditItem looks these up as
+# `flarum-audit.lib.browser.<action>`, so they have to live in the audit namespace
+# rather than ours; without them the browser falls back to raw JSON. They are
+# harmless when audit isn't installed — nothing reads them.
+#
+# Only the parameters AuditItem builds itself can be interpolated. {username} is one
+# of them and always resolves, so these messages stick to it. {post} and {discussion}
+# are also available, but a warning doesn't have to be attached to a post, and audit
+# interpolates one message per action with no way to branch on the payload — so naming
+# them here would render a dangling "Post #" on standalone warnings. The post, the
+# discussion and the strike count all remain visible via "Show raw log".
+flarum-audit:
+  lib:
+    browser:
+      warning:
+        created: Warned {username}
+        hidden: "Removed {username}'s warning"
+        restored: "Restored {username}'s warning"
+        deleted: "Permanently deleted {username}'s warning"

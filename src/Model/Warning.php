@@ -16,8 +16,11 @@ use Carbon\Carbon;
 use Flarum\Database\AbstractModel;
 use Flarum\Database\ScopeVisibilityTrait;
 use Flarum\Formatter\Formatter;
+use Flarum\Foundation\EventGeneratorTrait;
 use Flarum\Post\Post;
 use Flarum\User\User;
+use FoF\ModeratorWarnings\Event\WarningWasHidden;
+use FoF\ModeratorWarnings\Event\WarningWasRestored;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -37,6 +40,7 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class Warning extends AbstractModel
 {
+    use EventGeneratorTrait;
     use ScopeVisibilityTrait;
 
     protected $table = 'warnings';
@@ -99,6 +103,8 @@ class Warning extends AbstractModel
         if (! $this->hidden_at) {
             $this->hidden_at = Carbon::now();
             $this->hidden_user_id = $actor?->id;
+
+            $this->raise(new WarningWasHidden($this, $actor));
         }
 
         return $this;
@@ -112,6 +118,8 @@ class Warning extends AbstractModel
         if ($this->hidden_at !== null) {
             $this->hidden_at = null;
             $this->hidden_user_id = null;
+
+            $this->raise(new WarningWasRestored($this));
         }
 
         return $this;

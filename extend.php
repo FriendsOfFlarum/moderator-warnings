@@ -16,6 +16,7 @@ use Flarum\Api\Context;
 use Flarum\Api\Endpoint;
 use Flarum\Api\Resource;
 use Flarum\Api\Schema;
+use Flarum\Audit\Extend\Audit;
 use Flarum\Extend;
 use Flarum\Post\Post;
 use Flarum\Search\Database\DatabaseSearchDriver;
@@ -95,4 +96,33 @@ return [
         ->register(WarningProvider::class),
 
     new Extend\ApiResource(Api\Resource\WarningResource::class),
+
+    // Optional flarum/audit integration. The Conditional makes this a no-op unless the
+    // audit extension is enabled, so flarum/audit stays a dev-only dependency.
+    (new Extend\Conditional())
+        ->whenExtensionEnabled('flarum-audit', function () {
+            // Audit's frontend resolves {username}, {post} and {discussion} from the
+            // user_id / post_id / discussion_id keys, so the payload uses those names.
+            // The public and private comments are deliberately never logged: they're
+            // moderator-authored free text, and the audit log has a wider audience
+            // than the warning itself.
+            $payload = function (Warning $warning): array {
+                return [
+                    'warning_id' => $warning->id,
+                    'user_id' => $warning->user_id,
+                    'post_id' => $warning->post_id,
+                    'discussion_id' => $warning->post?->discussion_id,
+                    'strikes' => $warning->strikes,
+                ];
+            };
+
+            return [
+                (new Audit())
+                    ->group('fof-moderator-warnings')
+                    ->listen(Event\WarningWasCreated::class, 'warning.created', fn (Event\WarningWasCreated $e) => $payload($e->warning))
+                    ->listen(Event\WarningWasHidden::class, 'warning.hidden', fn (Event\WarningWasHidden $e) => $payload($e->warning))
+                    ->listen(Event\WarningWasRestored::class, 'warning.restored', fn (Event\WarningWasRestored $e) => $payload($e->warning))
+                    ->listen(Event\WarningWasDeleted::class, 'warning.deleted', fn (Event\WarningWasDeleted $e) => $payload($e->warning)),
+            ];
+        }),
 ];

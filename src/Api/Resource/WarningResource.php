@@ -19,6 +19,8 @@ use Flarum\Api\Schema;
 use Flarum\Api\Sort\SortColumn;
 use Flarum\Notification\NotificationSyncer;
 use Flarum\Post\Post;
+use FoF\ModeratorWarnings\Event\WarningWasCreated;
+use FoF\ModeratorWarnings\Event\WarningWasDeleted;
 use FoF\ModeratorWarnings\Model\Warning;
 use FoF\ModeratorWarnings\Notification\WarningBlueprint;
 use Illuminate\Database\Eloquent\Builder;
@@ -198,6 +200,9 @@ class WarningResource extends Resource\AbstractDatabaseResource
         /** @var Warning $model */
         $this->notifications->sync(new WarningBlueprint($model), [$model->warnedUser]);
 
+        // Released by the framework after this hook, with the actor filled in.
+        $model->raise(new WarningWasCreated($model));
+
         return $model;
     }
 
@@ -222,5 +227,9 @@ class WarningResource extends Resource\AbstractDatabaseResource
     {
         /** @var Warning $model */
         $this->notifications->sync(new WarningBlueprint($model), []);
+
+        // Raised pre-delete, released by the framework once the row is gone; the
+        // in-memory model keeps its attributes for listeners.
+        $model->raise(new WarningWasDeleted($model));
     }
 }
