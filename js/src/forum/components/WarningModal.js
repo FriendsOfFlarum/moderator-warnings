@@ -91,14 +91,25 @@ export default class WarningModal extends FormModal {
     app.store
       .createRecord('warnings')
       .save(data)
-      .then(this.hide.bind(this))
-      .then(
-        (this.successAlert = app.alerts.show(
+      .then((warning) => {
+        this.hide();
+
+        this.successAlert = app.alerts.show(
           { type: 'success' },
           app.translator.trans('fof-moderator-warnings.forum.warning_modal.confirmation_message')
-        ))
-      )
-      .then(this.attrs.callback)
-      .catch(() => {});
+        );
+
+        // The warning now appears immediately, so the confirmation is a transient
+        // acknowledgement rather than something the user has to act on.
+        setTimeout(() => app.alerts.dismiss(this.successAlert), 5000);
+
+        // Hand the saved warning to the caller so it can be shown in place
+        // rather than the page being reloaded to pick it up.
+        this.attrs.callback?.(warning);
+      })
+      .catch(() => {
+        this.loading = false;
+        m.redraw();
+      });
   }
 }

@@ -1,5 +1,4 @@
 import Model from 'flarum/common/Model';
-import computed from 'flarum/common/utils/computed';
 import User from 'flarum/common/models/User';
 import Post from 'flarum/common/models/Post';
 
@@ -25,7 +24,9 @@ export default class Warning extends Model {
   }
 
   isHidden() {
-    return computed<boolean>('hiddenAt', (hiddenAt) => !!hiddenAt).call(this);
+    // Read the server's flag rather than deriving from hiddenAt, which is only
+    // serialized while the warning is hidden and so goes stale on restore.
+    return Model.attribute<boolean>('isHidden').call(this);
   }
 
   warnedUser() {

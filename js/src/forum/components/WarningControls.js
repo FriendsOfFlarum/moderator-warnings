@@ -71,7 +71,7 @@ export default {
     if (!warning.isHidden() && app.session.user.canManageWarnings()) {
       items.add(
         'hide',
-        <Button icon="far fa-trash-alt" onclick={this.hideAction.bind(warning)}>
+        <Button icon="far fa-trash-alt" onclick={this.hideAction.bind(warning, context)}>
           {app.translator.trans('fof-moderator-warnings.forum.warning_controls.delete_button')}
         </Button>
       );
@@ -79,7 +79,7 @@ export default {
     if (warning.isHidden() && app.session.user.canManageWarnings()) {
       items.add(
         'restore',
-        <Button icon="fas fa-reply" onclick={this.restoreAction.bind(warning)}>
+        <Button icon="fas fa-reply" onclick={this.restoreAction.bind(warning, context)}>
           {app.translator.trans('fof-moderator-warnings.forum.warning_controls.restore_button')}
         </Button>
       );
@@ -87,7 +87,7 @@ export default {
     if (warning.isHidden() && app.session.user.canDeleteWarnings()) {
       items.add(
         'delete',
-        <Button icon="fas fa-times" onclick={this.deleteAction.bind(warning)}>
+        <Button icon="fas fa-times" onclick={this.deleteAction.bind(warning, context)}>
           {app.translator.trans('fof-moderator-warnings.forum.warning_controls.delete_forever_button')}
         </Button>
       );
@@ -101,12 +101,11 @@ export default {
    *
    * @return {Promise}
    */
-  hideAction() {
-    // `hiddenByUser` is a relationship, so it can't go through pushAttributes — the
-    // optimistic update needs pushData, as core's PostControls does.
-    this.pushData({ attributes: { hiddenAt: new Date() }, relationships: { hiddenByUser: app.session.user } });
-
-    return this.save({ isHidden: true }).then(() => m.redraw());
+  hideAction(context) {
+    return this.save({ isHidden: true }).then(() => {
+      context?.attrs?.onchange?.(this);
+      m.redraw();
+    });
   },
 
   /**
@@ -114,10 +113,11 @@ export default {
    *
    * @return {Promise}
    */
-  restoreAction() {
-    this.pushData({ attributes: { hiddenAt: null }, relationships: { hiddenByUser: null } });
-
-    return this.save({ isHidden: false }).then(() => m.redraw());
+  restoreAction(context) {
+    return this.save({ isHidden: false }).then(() => {
+      context?.attrs?.onchange?.(this);
+      m.redraw();
+    });
   },
 
   /**
@@ -128,12 +128,21 @@ export default {
   deleteAction(context) {
     if (context) context.loading = true;
 
-    return this.delete()
-      .then(() => {})
-      .catch(() => {})
-      .then(() => {
-        if (context) context.loading = false;
-        location.reload();
-      });
+    const done = () => {
+      if (context) context.loading = false;
+      m.redraw();
+    };
+
+    return this.delete().then(
+      () => {
+        context?.attrs?.ondelete?.(this);
+        done();
+      },
+      // Not swallowed: app.request shows its own error alert.
+      (error) => {
+        done();
+        throw error;
+      }
+    );
   },
 };

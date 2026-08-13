@@ -12,9 +12,12 @@ export default class PostWarningList extends Component {
   view() {
     return (
       <div className="Post-warning-list">
-        {this.attrs.post.warnings().map((warning) => {
-          return PostWarning.component({ warning });
-        })}
+        {this.attrs.post
+          .warnings()
+          .filter(Boolean)
+          .map((warning) => {
+            return PostWarning.component({ warning });
+          })}
       </div>
     );
   }

@@ -33,18 +33,7 @@ export default class WarningList extends Component {
         <div class="Warnings-toolbar">
           <ul className="Warnings-toolbar-action">{listItems(this.actionItems().toArray())}</ul>
         </div>
-        <ul className="WarningList-Warnings">
-          {this.warnings.map((warning) => {
-            return (
-              <li key={warning.id()} data-id={warning.id()}>
-                {WarningListItem.component({ warning })}
-              </li>
-            );
-          })}
-          {!this.loading && this.warnings.length === 0 && (
-            <label>{app.translator.trans('fof-moderator-warnings.forum.warning_list.no_warnings')}</label>
-          )}
-        </ul>
+        <ul className="WarningList-Warnings">{this.warningItems()}</ul>
         <div className="WarningList-loadMore">{loading}</div>
       </div>
     );
@@ -65,15 +54,53 @@ export default class WarningList extends Component {
     return items;
   }
 
+  /**
+   * The children of the warnings list, every one of them keyed.
+   *
+   * @return {import('mithril').Children[]}
+   */
+  warningItems() {
+    const items = this.visibleWarnings().map((warning) => (
+      <li key={`warning${warning.id()}`} data-id={warning.id()}>
+        {WarningListItem.component({
+          warning,
+          // Not `onremove`: that is a mithril lifecycle hook, which would be invoked
+          // with the vnode when the row itself is torn down.
+          ondelete: this.removeWarning.bind(this),
+          onchange: this.syncWarningCount.bind(this),
+        })}
+      </li>
+    ));
+
+    if (!this.loading && !items.length) {
+      items.push(
+        <li key="empty">
+          <label>{app.translator.trans('fof-moderator-warnings.forum.warning_list.no_warnings')}</label>
+        </li>
+      );
+    }
+
+    return items;
+  }
+
+  /**
+   * Renderable warnings, skipping entries the store no longer holds.
+   *
+   * @return {Warning[]}
+   */
+  visibleWarnings() {
+    return this.warnings.filter((warning) => warning && typeof warning.id === 'function');
+  }
+
   strikeCount() {
-    return this.warnings
+    return this.visibleWarnings()
       .filter((warning) => !warning.isHidden())
       .map((warning) => warning.strikes())
       .reduce((a, b) => a + b, 0);
   }
 
   parseResults(results) {
-    [].push.apply(this.warnings, results);
+    [].push.apply(this.warnings, [...results].filter(Boolean));
     this.loading = false;
     m.redraw();
 
@@ -81,19 +108,66 @@ export default class WarningList extends Component {
   }
 
   refresh() {
-    return app.store
-      .find('warnings', { filter: { userId: this.user.id() } })
-      .catch(() => {})
-      .then((results) => {
+    this.loading = true;
+
+    return app.store.find('warnings', { filter: { userId: this.user.id() } }).then(
+      (results) => {
         this.warnings = [];
         this.parseResults(results);
-      });
+      },
+      () => {
+        this.loading = false;
+        m.redraw();
+      }
+    );
+  }
+
+  /**
+   * Show a newly created warning without refetching the list.
+   *
+   * @param {Warning} warning
+   */
+  addWarning(warning) {
+    if (!warning || typeof warning.id !== 'function') return;
+
+    // The list is sorted newest-first, so a new warning belongs at the top.
+    this.warnings.unshift(warning);
+
+    this.syncWarningCount();
+
+    m.redraw();
+  }
+
+  /**
+   * Drop a deleted warning from the list without reloading the page.
+   *
+   * @param {Warning} warning
+   */
+  removeWarning(warning) {
+    if (!warning || typeof warning.id !== 'function') return;
+
+    const id = warning.id();
+
+    this.warnings = this.warnings.filter((w) => w && typeof w.id === 'function' && w.id() !== id);
+
+    this.syncWarningCount();
+
+    m.redraw();
+  }
+
+  /**
+   * Keep the profile badge in step with the list.
+   */
+  syncWarningCount() {
+    this.user.pushAttributes({
+      visibleWarningCount: this.visibleWarnings().filter((warning) => !warning.isHidden()).length,
+    });
   }
 
   handleOnClickCreate(e) {
     e.preventDefault();
     app.modal.show(WarningModal, {
-      callback: this.refresh.bind(this),
+      callback: this.addWarning.bind(this),
       ...this.attrs.params,
     });
   }

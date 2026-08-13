@@ -67,9 +67,13 @@ class WarningResource extends Resource\AbstractDatabaseResource
     public function endpoints(): array
     {
         return [
+            // The same default includes as Show: the frontend inserts the created warning
+            // straight into the list and the post footer, so the response has to carry
+            // everything those views render.
             Endpoint\Create::make()
                 ->authenticated()
-                ->can('user.manageWarnings'),
+                ->can('user.manageWarnings')
+                ->addDefaultInclude(['addedByUser', 'post', 'post.discussion']),
             Endpoint\Show::make()
                 ->addDefaultInclude(['addedByUser', 'post', 'post.discussion']),
             Endpoint\Update::make()

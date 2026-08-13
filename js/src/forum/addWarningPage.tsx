@@ -14,7 +14,15 @@ export default function addWarningPage() {
     // one's own profile, only show the link once there are visible warnings.
     const isSelf = user && app.session.user && user.id() === app.session.user.id();
 
-    if (app.session.user && user && user.canViewWarnings() && (!isSelf || user.visibleWarningCount() > 0)) {
+    // This item's children are rendered twice by UserPage's SelectDropdown nav (menu item
+    // + toggle label) whenever it is the active page, so its structure must never change
+    // while mounted: the badge is hidden at zero rather than removed, and the item stays
+    // registered while its page is being viewed.
+    const viewingWarnings = app.current.get('routeName') === 'user.warnings';
+
+    if (app.session.user && user && user.canViewWarnings() && (!isSelf || viewingWarnings || user.visibleWarningCount() > 0)) {
+      const count = user.visibleWarningCount() ?? 0;
+
       items.add(
         'warnings',
         <LinkButton
@@ -24,7 +32,9 @@ export default function addWarningPage() {
           icon="fas fa-exclamation-circle"
         >
           {app.translator.trans('fof-moderator-warnings.forum.user.warnings')}
-          {user.visibleWarningCount() > 0 ? <span className="Button-badge">{user.visibleWarningCount()}</span> : ''}
+          <span className="Button-badge" style={count > 0 ? undefined : { display: 'none' }}>
+            {count || ''}
+          </span>
         </LinkButton>,
         10
       );
