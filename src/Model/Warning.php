@@ -88,6 +88,36 @@ class Warning extends AbstractModel
         return $this->belongsTo(Post::class, 'post_id');
     }
 
+    /**
+     * Hide the warning, retracting it from the warned user.
+     *
+     * Guarded on the current state so re-hiding an already-hidden warning keeps the
+     * original timestamp and actor, as core's Post::hide() and Discussion::hide() do.
+     */
+    public function hide(?User $actor = null): static
+    {
+        if (! $this->hidden_at) {
+            $this->hidden_at = Carbon::now();
+            $this->hidden_user_id = $actor?->id;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Restore a hidden warning, reinstating it against the warned user.
+     */
+    public function restore(): static
+    {
+        if ($this->hidden_at !== null) {
+            /** @phpstan-ignore-next-line */
+            $this->hidden_at = null;
+            $this->hidden_user_id = null;
+        }
+
+        return $this;
+    }
+
     public static function strikesForUser(User $user): int
     {
         return self::where('user_id', $user->id)->get()->filter(function ($warning) {

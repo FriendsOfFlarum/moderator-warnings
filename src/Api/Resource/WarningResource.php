@@ -123,20 +123,24 @@ class WarningResource extends Resource\AbstractDatabaseResource
             Schema\DateTime::make('createdAt')
                 ->property('created_at'),
 
-            Schema\DateTime::make('hiddenAt')
-                ->nullable()
-                ->writable(fn (Warning $warning, Context $context) => $context->getActor()->can('user.manageWarnings'))
-                ->get(fn (Warning $warning) => $warning->hidden_at)
-                ->set(function (Warning $warning, ?\DateTimeInterface $value, Context $context) {
-                    if ($value !== null) {
-                        $warning->hidden_at = Carbon::now();
-                        $warning->hidden_user_id = $context->getActor()->id;
+            // Mirrors core's Post and Discussion resources: `isHidden` is the writable
+            // attribute, delegating to the model's hide()/restore(), while `hiddenAt` is
+            // read-only and only serialized once the warning is actually hidden. Writable
+            // only when updating, so a warning can't be created pre-hidden.
+            Schema\Boolean::make('isHidden')
+                ->get(fn (Warning $warning) => $warning->hidden_at !== null)
+                ->writable(fn (Warning $warning, Context $context) => $context->updating()
+                    && $context->getActor()->can('user.manageWarnings'))
+                ->set(function (Warning $warning, bool $value, Context $context) {
+                    if ($value) {
+                        $warning->hide($context->getActor());
                     } else {
-                        /** @phpstan-ignore-next-line */
-                        $warning->hidden_at = null;
-                        $warning->hidden_user_id = null;
+                        $warning->restore();
                     }
                 }),
+
+            Schema\DateTime::make('hiddenAt')
+                ->visible(fn (Warning $warning) => $warning->hidden_at !== null),
 
             Schema\Relationship\ToOne::make('warnedUser')
                 ->includable()

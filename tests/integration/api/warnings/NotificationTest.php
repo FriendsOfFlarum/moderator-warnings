@@ -93,7 +93,7 @@ class NotificationTest extends TestCase
                         'type' => 'warnings',
                         'id' => '1',
                         'attributes' => [
-                            'hiddenAt' => null,
+                            'isHidden' => false,
                         ],
                     ],
                 ],

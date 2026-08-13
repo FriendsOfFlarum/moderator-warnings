@@ -102,7 +102,9 @@ export default {
    * @return {Promise}
    */
   hideAction() {
-    this.pushAttributes({ hiddenAt: new Date(), hiddenUser: app.session.user });
+    // `hiddenByUser` is a relationship, so it can't go through pushAttributes — the
+    // optimistic update needs pushData, as core's PostControls does.
+    this.pushData({ attributes: { hiddenAt: new Date() }, relationships: { hiddenByUser: app.session.user } });
 
     return this.save({ isHidden: true }).then(() => m.redraw());
   },
@@ -113,7 +115,7 @@ export default {
    * @return {Promise}
    */
   restoreAction() {
-    this.pushAttributes({ hiddenAt: null, hiddenUser: null });
+    this.pushData({ attributes: { hiddenAt: null }, relationships: { hiddenByUser: null } });
 
     return this.save({ isHidden: false }).then(() => m.redraw());
   },
