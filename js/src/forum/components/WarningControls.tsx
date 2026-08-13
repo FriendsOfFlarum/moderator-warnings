@@ -2,6 +2,20 @@ import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
 import Separator from 'flarum/common/components/Separator';
 import ItemList from 'flarum/common/utils/ItemList';
+import type Warning from '../model/Warning';
+import type Mithril from 'mithril';
+
+/**
+ * The component the controls are rendered under, exposing the callbacks the
+ * actions report back through.
+ */
+export interface WarningControlsContext {
+  loading?: boolean;
+  attrs: {
+    ondelete?: (warning: Warning) => void;
+    onchange?: (warning: Warning) => void;
+  };
+}
 
 /**
  * The `WarningControls` utility constructs a list of buttons for a warning which
@@ -11,17 +25,14 @@ export default {
   /**
    * Get a list of controls for a warning.
    *
-   * @param {Warning} warning
-   * @param {*} context The parent component under which the controls menu will
+   * @param context The parent component under which the controls menu will
    *     be displayed.
-   * @return {ItemList}
-   * @public
    */
-  controls(warning, context) {
-    const items = new ItemList();
+  controls(warning: Warning, context: WarningControlsContext): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
 
-    ['user', 'moderation', 'destructive'].forEach((section) => {
-      const controls = this[section + 'Controls'](warning, context).toArray();
+    (['user', 'moderation', 'destructive'] as const).forEach((section) => {
+      const controls = this[`${section}Controls`](warning, context).toArray();
       if (controls.length) {
         controls.forEach((item) => items.add(item.itemName, item));
         items.add(section + 'Separator', Separator.component());
@@ -33,42 +44,25 @@ export default {
 
   /**
    * Get controls for a warning pertaining to the current user (e.g. report).
-   *
-   * @param {Warning} warning
-   * @param {*} context The parent component under which the controls menu will
-   *     be displayed.
-   * @return {ItemList}
-   * @protected
    */
-  userControls(warning, context) {
+  userControls(_warning: Warning, _context: WarningControlsContext): ItemList<Mithril.Children> {
     return new ItemList();
   },
 
   /**
    * Get controls for a warning pertaining to moderation (e.g. edit).
-   *
-   * @param {Warning} warning
-   * @param {*} context The parent component under which the controls menu will
-   *     be displayed.
-   * @return {ItemList}
-   * @protected
    */
-  moderationControls(warning, context) {
+  moderationControls(_warning: Warning, _context: WarningControlsContext): ItemList<Mithril.Children> {
     return new ItemList();
   },
 
   /**
    * Get controls for a warning that are destructive (e.g. delete).
-   *
-   * @param {Warning} warning
-   * @param {*} context The parent component under which the controls menu will
-   *     be displayed.
-   * @return {ItemList}
-   * @protected
    */
-  destructiveControls(warning, context) {
-    const items = new ItemList();
-    if (!warning.isHidden() && app.session.user.canManageWarnings()) {
+  destructiveControls(warning: Warning, context: WarningControlsContext): ItemList<Mithril.Children> {
+    const items = new ItemList<Mithril.Children>();
+
+    if (!warning.isHidden() && app.session.user?.canManageWarnings()) {
       items.add(
         'hide',
         <Button icon="far fa-trash-alt" onclick={this.hideAction.bind(warning, context)}>
@@ -76,7 +70,7 @@ export default {
         </Button>
       );
     }
-    if (warning.isHidden() && app.session.user.canManageWarnings()) {
+    if (warning.isHidden() && app.session.user?.canManageWarnings()) {
       items.add(
         'restore',
         <Button icon="fas fa-reply" onclick={this.restoreAction.bind(warning, context)}>
@@ -84,7 +78,7 @@ export default {
         </Button>
       );
     }
-    if (warning.isHidden() && app.session.user.canDeleteWarnings()) {
+    if (warning.isHidden() && app.session.user?.canDeleteWarnings()) {
       items.add(
         'delete',
         <Button icon="fas fa-times" onclick={this.deleteAction.bind(warning, context)}>
@@ -98,10 +92,8 @@ export default {
 
   /**
    * Hide a warning.
-   *
-   * @return {Promise}
    */
-  hideAction(context) {
+  hideAction(this: Warning, context?: WarningControlsContext): Promise<void> {
     return this.save({ isHidden: true }).then(() => {
       context?.attrs?.onchange?.(this);
       m.redraw();
@@ -110,10 +102,8 @@ export default {
 
   /**
    * Restore a warning.
-   *
-   * @return {Promise}
    */
-  restoreAction(context) {
+  restoreAction(this: Warning, context?: WarningControlsContext): Promise<void> {
     return this.save({ isHidden: false }).then(() => {
       context?.attrs?.onchange?.(this);
       m.redraw();
@@ -122,10 +112,8 @@ export default {
 
   /**
    * Delete a warning.
-   *
-   * @return {Promise}
    */
-  deleteAction(context) {
+  deleteAction(this: Warning, context?: WarningControlsContext): Promise<void> {
     if (context) context.loading = true;
 
     const done = () => {

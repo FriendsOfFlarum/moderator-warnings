@@ -1,5 +1,5 @@
 import app from 'flarum/forum/app';
-import Component from 'flarum/common/Component';
+import Component, { ComponentAttrs } from 'flarum/common/Component';
 import Dropdown from 'flarum/common/components/Dropdown';
 import Link from 'flarum/common/components/Link';
 import Avatar from 'flarum/common/components/Avatar';
@@ -9,9 +9,19 @@ import classList from 'flarum/common/utils/classList';
 import SubtreeRetainer from 'flarum/common/utils/SubtreeRetainer';
 import WarningPost from './WarningPost';
 import WarningControls from './WarningControls';
+import type Warning from '../model/Warning';
+import type Mithril from 'mithril';
 
-export default class WarningListItem extends Component {
-  oninit(vnode) {
+export interface IWarningListItemAttrs extends ComponentAttrs {
+  warning: Warning;
+  ondelete?: (warning: Warning) => void;
+  onchange?: (warning: Warning) => void;
+}
+
+export default class WarningListItem<CustomAttrs extends IWarningListItemAttrs = IWarningListItemAttrs> extends Component<CustomAttrs> {
+  subtree!: SubtreeRetainer;
+
+  oninit(vnode: Mithril.Vnode<CustomAttrs, this>) {
     super.oninit(vnode);
 
     this.subtree = new SubtreeRetainer(
@@ -20,7 +30,7 @@ export default class WarningListItem extends Component {
     );
   }
 
-  onbeforeupdate(vnode) {
+  onbeforeupdate(vnode: Mithril.VnodeDOM<CustomAttrs, this>) {
     super.onbeforeupdate(vnode);
 
     return this.subtree.needsRebuild();
@@ -29,6 +39,7 @@ export default class WarningListItem extends Component {
   view() {
     const { warning } = this.attrs;
     const addedByUser = warning.addedByUser();
+    const post = warning.post();
     const controls = WarningControls.controls(warning, this).toArray();
 
     return (
@@ -44,10 +55,10 @@ export default class WarningListItem extends Component {
         <div className="WarningListItem-main">
           <h3 className="WarningListItem-title">
             <Link href={addedByUser ? app.route.user(addedByUser) : '#'} className="WarningListItem-author">
-              <Avatar user={addedByUser} /> {username(addedByUser)}
+              <Avatar user={addedByUser || null} /> {username(addedByUser)}
             </Link>
           </h3>
-          <span class="WarningListItem-strikes">
+          <span className="WarningListItem-strikes">
             {warning.isHidden()
               ? app.translator.trans('fof-moderator-warnings.forum.warning_list_item.list_item_heading_hidden', {
                   time: humanTime(warning.createdAt()),
@@ -60,22 +71,22 @@ export default class WarningListItem extends Component {
           </span>
           <hr />
           <ul className="WarningListItem-info">
-            {warning.post() ? (
+            {post ? (
               <li className="item-excerpt">
                 <h3 className="WarningListItem-subtitle">{app.translator.trans('fof-moderator-warnings.forum.warning_list_item.linked_post')}</h3>
-                {WarningPost.component({ post: warning.post() })}
+                {WarningPost.component({ post })}
               </li>
             ) : (
               ''
             )}
             <li className="item-excerpt">
               <h3 className="WarningListItem-subtitle">{app.translator.trans('fof-moderator-warnings.forum.warning_list_item.public_comment')}</h3>
-              <p class="WarningListItem-comment">{m.trust(warning.publicComment())}</p>
+              <p className="WarningListItem-comment">{m.trust(warning.publicComment())}</p>
             </li>
-            {app.session.user.canManageWarnings() && warning.privateComment() ? (
+            {app.session.user?.canManageWarnings() && warning.privateComment() ? (
               <li className="item-excerpt">
                 <h3 className="WarningListItem-subtitle">{app.translator.trans('fof-moderator-warnings.forum.warning_list_item.private_comment')}</h3>
-                <p class="WarningListItem-comment">{m.trust(warning.privateComment())}</p>
+                <p className="WarningListItem-comment">{m.trust(warning.privateComment()!)}</p>
               </li>
             ) : (
               ''
@@ -86,18 +97,14 @@ export default class WarningListItem extends Component {
     );
   }
 
-  elementAttrs() {
+  elementAttrs(): ComponentAttrs {
     const { warning } = this.attrs;
-    const attrs = {};
 
-    attrs.className =
-      (attrs.className || '') +
-      ' ' +
-      classList({
+    return {
+      className: classList({
         WarningListItem: true,
         'WarningListItem--hidden': warning.isHidden(),
-      });
-
-    return attrs;
+      }),
+    };
   }
 }
