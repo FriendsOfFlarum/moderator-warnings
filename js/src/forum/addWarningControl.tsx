@@ -9,7 +9,7 @@ import type User from 'flarum/common/models/User';
  * Keep the profile warnings badge in step after a warning is issued. The count is
  * computed server-side, so without this it only catches up on the next page load.
  */
-function bumpWarningCount(user: User | null | undefined) {
+function bumpWarningCount(user: User | null | undefined | false) {
   if (!user) return;
 
   const count = user.visibleWarningCount();
