@@ -108,11 +108,11 @@ return [
             // than the warning itself.
             $payload = function (Warning $warning): array {
                 return [
-                    'warning_id'    => $warning->id,
-                    'user_id'       => $warning->user_id,
-                    'post_id'       => $warning->post_id,
+                    'warning_id' => $warning->id,
+                    'user_id' => $warning->user_id,
+                    'post_id' => $warning->post_id,
                     'discussion_id' => $warning->post?->discussion_id,
-                    'strikes'       => $warning->strikes,
+                    'strikes' => $warning->strikes,
                 ];
             };
 

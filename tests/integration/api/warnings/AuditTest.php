@@ -118,11 +118,11 @@ class AuditTest extends TestCase
         $id = (int) json_decode($body, true)['data']['id'];
 
         $this->assertLogged('warning.created', [
-            'warning_id'    => $id,
-            'user_id'       => 2,
-            'post_id'       => 1,
+            'warning_id' => $id,
+            'user_id' => 2,
+            'post_id' => 1,
             'discussion_id' => 1,
-            'strikes'       => 3,
+            'strikes' => 3,
         ]);
     }
 
@@ -176,11 +176,11 @@ class AuditTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode(), $response->getBody()->getContents());
 
         $this->assertLogged('warning.hidden', [
-            'warning_id'    => 1,
-            'user_id'       => 2,
-            'post_id'       => 1,
+            'warning_id' => 1,
+            'user_id' => 2,
+            'post_id' => 1,
             'discussion_id' => 1,
-            'strikes'       => 2,
+            'strikes' => 2,
         ]);
 
         $this->assertNotLogged('warning.restored');
@@ -207,11 +207,11 @@ class AuditTest extends TestCase
 
         // Warning 2 has no post, so both post keys are null.
         $this->assertLogged('warning.restored', [
-            'warning_id'    => 2,
-            'user_id'       => 2,
-            'post_id'       => null,
+            'warning_id' => 2,
+            'user_id' => 2,
+            'post_id' => null,
             'discussion_id' => null,
-            'strikes'       => 1,
+            'strikes' => 1,
         ]);
 
         $this->assertNotLogged('warning.hidden');
@@ -228,11 +228,11 @@ class AuditTest extends TestCase
 
         // The event fires before the row is removed, so the payload still carries its attributes.
         $this->assertLogged('warning.deleted', [
-            'warning_id'    => 1,
-            'user_id'       => 2,
-            'post_id'       => 1,
+            'warning_id' => 1,
+            'user_id' => 2,
+            'post_id' => 1,
             'discussion_id' => 1,
-            'strikes'       => 2,
+            'strikes' => 2,
         ]);
     }
 
