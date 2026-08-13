@@ -44,13 +44,13 @@ declare namespace _default {
      *
      * @return {Promise}
      */
-    function hideAction(): Promise<any>;
+    function hideAction(context: any): Promise<any>;
     /**
      * Restore a warning.
      *
      * @return {Promise}
      */
-    function restoreAction(): Promise<any>;
+    function restoreAction(context: any): Promise<any>;
     /**
      * Delete a warning.
      *
