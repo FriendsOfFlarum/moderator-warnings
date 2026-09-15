@@ -86,6 +86,21 @@ class WarningResource extends Resource\AbstractDatabaseResource
                 ->can('delete'),
             Endpoint\Index::make()
                 ->addDefaultInclude(['addedByUser', 'post', 'post.discussion'])
+                // Newest first unless the request asks otherwise. Core reads the default
+                // from the endpoint (as its discussion and post endpoints do); without it
+                // the list came back in id order.
+                ->defaultSort('-createdAt')
+                // Eager-load what serializing the included models reads, or a list of
+                // warnings loads it once per row:
+                //  - a user's groups: core's editCredentials policy calls isAdmin() for
+                //    actors allowed to edit credentials;
+                //  - a post's discussion and the actor's state in it: read by the post's
+                //    own fields, as core eager-loads them on the posts endpoints.
+                ->eagerLoadWhenIncluded([
+                    'warnedUser' => ['warnedUser.groups'],
+                    'addedByUser' => ['addedByUser.groups'],
+                    'post' => ['post.discussion.state'],
+                ])
                 ->paginate(),
         ];
     }
@@ -179,11 +194,6 @@ class WarningResource extends Resource\AbstractDatabaseResource
                 ->ascendingAlias('oldest')
                 ->descendingAlias('newest'),
         ];
-    }
-
-    public function defaultSort(): array
-    {
-        return ['-createdAt'];
     }
 
     public function creating(object $model, \Tobyz\JsonApiServer\Context $context): ?object

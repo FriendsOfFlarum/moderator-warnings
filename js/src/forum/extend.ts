@@ -18,7 +18,8 @@ export default [
     .add('warning', WarningNotification),
 
   new Extend.Routes() //
-    .add('user.warnings', '/u/:username/warnings', () => import('./components/WarningPage')),
+    .add('user.warnings', '/u/:username/warnings', () => import('./components/WarningPage'))
+    .add('warnings', '/warnings', () => import('./components/WarningsPage')),
 
   new Extend.Model(Post) //
     .hasMany<Warning>('warnings'),

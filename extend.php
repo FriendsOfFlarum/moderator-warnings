@@ -27,6 +27,7 @@ use FoF\ModeratorWarnings\Api\PostResourceFields;
 use FoF\ModeratorWarnings\Model\Warning;
 use FoF\ModeratorWarnings\Notification\WarningBlueprint;
 use FoF\ModeratorWarnings\Provider\WarningProvider;
+use FoF\ModeratorWarnings\Search\Filter\HiddenFilter;
 use FoF\ModeratorWarnings\Search\Filter\UserIdFilter;
 use FoF\ModeratorWarnings\Search\WarningSearcher;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,7 +36,8 @@ return [
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')
         ->jsDirectory(__DIR__.'/js/dist/forum')
-        ->css(__DIR__.'/resources/less/forum.less'),
+        ->css(__DIR__.'/resources/less/forum.less')
+        ->route('/warnings', 'warnings', Forum\Content\AssertCanViewAllWarnings::class),
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
@@ -54,6 +56,15 @@ return [
 
     (new Extend\Notification())
         ->type(WarningBlueprint::class, ['alert', 'email']),
+
+    (new Extend\ApiResource(Resource\ForumResource::class))
+        ->fields(fn () => [
+            // Whether the actor may open the forum-wide warnings page. A global check,
+            // unlike the per-user canViewWarnings attribute below, which is also true
+            // on the actor's own profile.
+            Schema\Boolean::make('canViewAllWarnings')
+                ->get(fn ($forum, Context $context) => $context->getActor()->can('user.viewWarnings')),
+        ]),
 
     (new Extend\ApiResource(Resource\UserResource::class))
         ->fields(fn () => [
@@ -90,7 +101,8 @@ return [
 
     (new Extend\SearchDriver(DatabaseSearchDriver::class))
         ->addSearcher(Warning::class, WarningSearcher::class)
-        ->addFilter(WarningSearcher::class, UserIdFilter::class),
+        ->addFilter(WarningSearcher::class, UserIdFilter::class)
+        ->addFilter(WarningSearcher::class, HiddenFilter::class),
 
     (new Extend\ServiceProvider())
         ->register(WarningProvider::class),
