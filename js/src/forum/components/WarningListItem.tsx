@@ -16,6 +16,12 @@ export interface IWarningListItemAttrs extends ComponentAttrs {
   warning: Warning;
   ondelete?: (warning: Warning) => void;
   onchange?: (warning: Warning) => void;
+  /**
+   * Lead with the warned user instead of the moderator. A profile's list is already about
+   * one user; lists mixing users (like the forum-wide warnings page) need to say whose
+   * warning each row is. Requires the `warnedUser` relationship to be loaded.
+   */
+  showWarnedUser?: boolean;
 }
 
 export default class WarningListItem<CustomAttrs extends IWarningListItemAttrs = IWarningListItemAttrs> extends Component<CustomAttrs> {
@@ -53,11 +59,15 @@ export default class WarningListItem<CustomAttrs extends IWarningListItemAttrs =
           controls
         )}
         <div className="WarningListItem-main">
-          <h3 className="WarningListItem-title">
-            <Link href={addedByUser ? app.route.user(addedByUser) : '#'} className="WarningListItem-author">
-              <Avatar user={addedByUser || null} /> {username(addedByUser)}
-            </Link>
-          </h3>
+          {this.attrs.showWarnedUser ? (
+            this.warnedUserTitle()
+          ) : (
+            <h3 className="WarningListItem-title">
+              <Link href={addedByUser ? app.route.user(addedByUser) : '#'} className="WarningListItem-author">
+                <Avatar user={addedByUser || null} /> {username(addedByUser)}
+              </Link>
+            </h3>
+          )}
           <span className="WarningListItem-strikes">
             {warning.isHidden()
               ? app.translator.trans('fof-moderator-warnings.forum.warning_list_item.list_item_heading_hidden', {
@@ -94,6 +104,29 @@ export default class WarningListItem<CustomAttrs extends IWarningListItemAttrs =
           </ul>
         </div>
       </div>
+    );
+  }
+
+  /**
+   * The title when leading with the warned user: their name links to their warnings, and
+   * the moderator who issued the warning follows.
+   */
+  warnedUserTitle(): Mithril.Children {
+    const { warning } = this.attrs;
+    const warnedUser = warning.warnedUser();
+    const addedByUser = warning.addedByUser();
+
+    return (
+      <h3 className="WarningListItem-title">
+        <Link href={warnedUser ? app.route('user.warnings', { username: warnedUser.slug() }) : '#'} className="WarningListItem-author">
+          <Avatar user={warnedUser || null} /> {username(warnedUser)}
+        </Link>{' '}
+        <span className="WarningListItem-addedBy">
+          {app.translator.trans('fof-moderator-warnings.forum.warning_list_item.warned_by', {
+            username: addedByUser ? <Link href={app.route.user(addedByUser)}>{username(addedByUser)}</Link> : username(addedByUser),
+          })}
+        </span>
+      </h3>
     );
   }
 

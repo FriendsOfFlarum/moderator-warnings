@@ -4,6 +4,8 @@
 
 A [Flarum](http://flarum.org) extension. This allows moderators to warn users. Warnings can be applied from a post or from the user's profile. Each warning contains a number of strikes (0 - 5), a message visible to the user, and a message visible only to other moderators. Users will recieve notifications for warnings they recieve.
 
+Users with the "view warnings" permission also get a forum-wide **Warnings** page (`/warnings`, linked from the index sidebar) listing every warning, filterable by user and sortable by date. Those who can manage warnings can additionally filter by active or removed warnings.
+
 ### TODO
 
 - Suspend integration (automatically suspend if users reach more than X warnings, with X configurable in settings)

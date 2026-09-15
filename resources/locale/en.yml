@@ -30,6 +30,8 @@ fof-moderator-warnings:
 
         {public_comment}
   forum:
+    index:
+      warnings_link: Warnings
     notifications:
       warning_text: '{strikes, plural, one {You were warned with # strike by {mod_username}} other {You were warned with # strikes by {mod_username}}}'
       warning_no_strikes_text: You were warned by {mod_username} (no strikes)
@@ -60,6 +62,19 @@ fof-moderator-warnings:
       public_comment: Warning
       private_comment: Moderator-Visible Comments
       linked_post: Linked Post
+      warned_by: warned by {username}
+    warnings_page:
+      title: Moderator Warnings
+      filter_user_button: Filter by user
+      clear_user_button: Clear user filter
+      user_modal_title: Show warnings for
+      status_all: All warnings
+      status_active: Active
+      status_removed: Removed
+      sort_newest: Newest
+      sort_oldest: Oldest
+      empty_text: No warnings match these filters.
+      load_more_button: Load more
     warning_modal:
       confirmation_message: Your warning has been saved.
       heading: Warn <strong>{username}</strong>

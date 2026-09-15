@@ -144,6 +144,15 @@ class Warning extends AbstractModel
             return $query;
         }
 
+        // Users with view permissions can see every user's warnings, as the
+        // UserPolicy already grants them. Without this they passed the policy
+        // check and were then scoped down to their own warnings, so another
+        // user's list came back empty. Removed warnings stay with managers:
+        // retracting a warning is part of managing warnings.
+        if ($actor->can('user.viewWarnings')) {
+            return $query->whereNull('hidden_at');
+        }
+
         // Regular users can see:
         // 1. Their own non-hidden warnings
         // 2. Warnings on posts they authored (non-hidden)
