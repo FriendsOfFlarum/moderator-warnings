@@ -17,16 +17,20 @@ use Flarum\Api\Endpoint;
 use Flarum\Api\Resource;
 use Flarum\Api\Schema;
 use Flarum\Audit\Extend\Audit;
+use Flarum\Discussion\Discussion;
 use Flarum\Extend;
 use Flarum\Post\Post;
 use Flarum\Search\Database\DatabaseSearchDriver;
+use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\User;
+use FoF\ModeratorWarnings\Access\AcknowledgementPolicy;
 use FoF\ModeratorWarnings\Access\UserPolicy;
 use FoF\ModeratorWarnings\Access\WarningPolicy;
 use FoF\ModeratorWarnings\Api\PostResourceFields;
 use FoF\ModeratorWarnings\Model\Warning;
 use FoF\ModeratorWarnings\Notification\WarningBlueprint;
 use FoF\ModeratorWarnings\Provider\WarningProvider;
+use FoF\ModeratorWarnings\Search\Filter\AwaitingAcknowledgementFilter;
 use FoF\ModeratorWarnings\Search\Filter\UserIdFilter;
 use FoF\ModeratorWarnings\Search\WarningSearcher;
 use Illuminate\Database\Eloquent\Builder;
@@ -47,7 +51,12 @@ return [
         ->hasMany('warnings', Warning::class, 'post_id'),
 
     (new Extend\Model(User::class))
-        ->hasMany('warnings', Warning::class, 'user_id'),
+        ->hasMany('warnings', Warning::class, 'user_id')
+        ->cast('has_unacknowledged_warnings', 'boolean'),
+
+    (new Extend\Settings())
+        ->default('fof-moderator-warnings.require_acknowledgement', false)
+        ->serializeToForum('fof-moderator-warnings.requireAcknowledgement', 'fof-moderator-warnings.require_acknowledgement', 'boolval'),
 
     (new Extend\View())
         ->namespace('fof-moderator-warnings', __DIR__.'/views'),
@@ -69,6 +78,12 @@ return [
                 ->countRelation('warnings', function (Builder $query) {
                     $query->whereNull('hidden_at');
                 }),
+            // Read from the user's own row, so it costs no query; only the user
+            // themselves is told, to decide whether to show the acknowledgement modal.
+            Schema\Boolean::make('hasUnacknowledgedWarnings')
+                ->visible(fn (User $user, Context $context) => $context->getActor()->id === $user->id)
+                ->get(fn (User $user) => $user->has_unacknowledged_warnings
+                    && resolve(SettingsRepositoryInterface::class)->get('fof-moderator-warnings.require_acknowledgement')),
         ]),
 
     (new Extend\ApiResource(Resource\PostResource::class))
@@ -86,11 +101,14 @@ return [
 
     (new Extend\Policy())
         ->modelPolicy(User::class, UserPolicy::class)
-        ->modelPolicy(Warning::class, WarningPolicy::class),
+        ->modelPolicy(Warning::class, WarningPolicy::class)
+        ->globalPolicy(AcknowledgementPolicy::class)
+        ->modelPolicy(Discussion::class, AcknowledgementPolicy::class),
 
     (new Extend\SearchDriver(DatabaseSearchDriver::class))
         ->addSearcher(Warning::class, WarningSearcher::class)
-        ->addFilter(WarningSearcher::class, UserIdFilter::class),
+        ->addFilter(WarningSearcher::class, UserIdFilter::class)
+        ->addFilter(WarningSearcher::class, AwaitingAcknowledgementFilter::class),
 
     (new Extend\ServiceProvider())
         ->register(WarningProvider::class),

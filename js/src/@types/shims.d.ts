@@ -7,6 +7,7 @@ declare module 'flarum/common/models/User' {
     canManageWarnings(): boolean;
     canDeleteWarnings(): boolean;
     visibleWarningCount(): number;
+    hasUnacknowledgedWarnings(): boolean | undefined;
   }
 }
 

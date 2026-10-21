@@ -29,5 +29,11 @@ export default [
       }),
       'moderate',
       3
-    ),
+    )
+    .setting(() => ({
+      setting: 'fof-moderator-warnings.require_acknowledgement',
+      type: 'boolean',
+      label: app.translator.trans('fof-moderator-warnings.admin.settings.require_acknowledgement_label'),
+      help: app.translator.trans('fof-moderator-warnings.admin.settings.require_acknowledgement_help'),
+    })),
 ];

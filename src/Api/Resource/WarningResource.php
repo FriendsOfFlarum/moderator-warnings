@@ -19,6 +19,7 @@ use Flarum\Api\Schema;
 use Flarum\Api\Sort\SortColumn;
 use Flarum\Notification\NotificationSyncer;
 use Flarum\Post\Post;
+use Flarum\Settings\SettingsRepositoryInterface;
 use FoF\ModeratorWarnings\Event\WarningWasCreated;
 use FoF\ModeratorWarnings\Event\WarningWasDeleted;
 use FoF\ModeratorWarnings\Model\Warning;
@@ -32,7 +33,8 @@ use Illuminate\Support\Carbon;
 class WarningResource extends Resource\AbstractDatabaseResource
 {
     public function __construct(
-        protected NotificationSyncer $notifications
+        protected NotificationSyncer $notifications,
+        protected SettingsRepositoryInterface $settings
     ) {
     }
 
@@ -87,6 +89,21 @@ class WarningResource extends Resource\AbstractDatabaseResource
             Endpoint\Index::make()
                 ->addDefaultInclude(['addedByUser', 'post', 'post.discussion'])
                 ->paginate(),
+            // A dedicated action rather than a writable field on Update: Update is
+            // for moderators, and the warned user must be able to do this one thing
+            // to their own warning without being able to edit anything else.
+            Endpoint\Endpoint::make('acknowledge')
+                ->route('POST', '/{id}/acknowledge')
+                ->authenticated()
+                ->can('acknowledge')
+                ->action(function (Context $context) {
+                    /** @var Warning $warning */
+                    $warning = $context->model;
+
+                    $warning->acknowledge()->save();
+
+                    return $warning;
+                }),
         ];
     }
 
@@ -125,6 +142,19 @@ class WarningResource extends Resource\AbstractDatabaseResource
                 ->set(function (Warning $warning, int $value) {
                     $warning->strikes = $value;
                 }),
+
+            // Defaults to the forum setting, and is always false while the setting is
+            // off, so API clients that don't know about it behave as before.
+            Schema\Boolean::make('requiresAcknowledgement')
+                ->default(fn () => $this->acknowledgementEnabled())
+                ->writable(fn (Warning $warning, Context $context) => $context->creating()
+                    && $context->getActor()->can('user.manageWarnings'))
+                ->set(function (Warning $warning, bool $value) {
+                    $warning->requires_acknowledgement = $value && $this->acknowledgementEnabled();
+                }),
+
+            Schema\DateTime::make('acknowledgedAt')
+                ->property('acknowledged_at'),
 
             Schema\DateTime::make('createdAt')
                 ->property('created_at'),
@@ -170,6 +200,11 @@ class WarningResource extends Resource\AbstractDatabaseResource
                     $warning->post_id = $post?->id;
                 }),
         ];
+    }
+
+    protected function acknowledgementEnabled(): bool
+    {
+        return (bool) $this->settings->get('fof-moderator-warnings.require_acknowledgement');
     }
 
     public function sorts(): array

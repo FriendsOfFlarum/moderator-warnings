@@ -12,7 +12,8 @@ export default [
     .attribute('canViewWarnings')
     .attribute('canManageWarnings')
     .attribute('canDeleteWarnings')
-    .attribute('visibleWarningCount'),
+    .attribute('visibleWarningCount')
+    .attribute('hasUnacknowledgedWarnings'),
 
   new Extend.Notification() //
     .add('warning', WarningNotification),

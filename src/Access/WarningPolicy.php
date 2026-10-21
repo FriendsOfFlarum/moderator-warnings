@@ -35,4 +35,16 @@ class WarningPolicy extends AbstractPolicy
 
         return null;
     }
+
+    public function acknowledge(User $actor, Warning $warning): ?string
+    {
+        // Only the warned user can acknowledge, and only a warning that asked for
+        // it. Denied outright for everyone else, admins included: an admin
+        // acknowledging on someone's behalf would defeat the point.
+        if ($actor->id == $warning->user_id && $warning->requires_acknowledgement && ! $warning->hidden_at) {
+            return $this->allow();
+        }
+
+        return $this->deny();
+    }
 }
