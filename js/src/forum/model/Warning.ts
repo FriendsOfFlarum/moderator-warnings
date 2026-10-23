@@ -23,6 +23,14 @@ export default class Warning extends Model {
     return Model.attribute<Date | null, string>('hiddenAt', Model.transformDate).call(this);
   }
 
+  requiresAcknowledgement() {
+    return Model.attribute<boolean>('requiresAcknowledgement').call(this);
+  }
+
+  acknowledgedAt() {
+    return Model.attribute<Date | null, string | null>('acknowledgedAt', Model.transformDate).call(this);
+  }
+
   isHidden() {
     // Read the server's flag rather than deriving from hiddenAt, which is only
     // serialized while the warning is hidden and so goes stale on restore.

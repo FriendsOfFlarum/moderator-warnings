@@ -37,6 +37,8 @@ use Illuminate\Database\Eloquent\Builder;
  * @property int $strikes
  * @property int|null $hidden_user_id
  * @property int|null $created_user_id
+ * @property bool $requires_acknowledgement
+ * @property Carbon|null $acknowledged_at
  */
 class Warning extends AbstractModel
 {
@@ -45,7 +47,12 @@ class Warning extends AbstractModel
 
     protected $table = 'warnings';
 
-    protected $casts = ['created_at' => 'datetime', 'hidden_at' => 'datetime'];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'hidden_at' => 'datetime',
+        'requires_acknowledgement' => 'boolean',
+        'acknowledged_at' => 'datetime',
+    ];
 
     /**
      * The text formatter instance.
@@ -70,6 +77,36 @@ class Warning extends AbstractModel
     public static function setFormatter(Formatter $formatter): void
     {
         static::$formatter = $formatter;
+    }
+
+    protected static function booted(): void
+    {
+        // Keep the warned user's has_unacknowledged_warnings flag in step with
+        // their warnings, whichever code path creates, hides, restores,
+        // acknowledges, reassigns or deletes one. Warnings that never required
+        // acknowledgement can't change the flag, so they cost nothing here.
+        static::saved(function (self $warning) {
+            // `saved` fires before the original attributes are synced, so
+            // getOriginal() still holds the values from before this save.
+            if (! $warning->requires_acknowledgement && ! $warning->getOriginal('requires_acknowledgement')) {
+                return;
+            }
+
+            if ($warning->wasRecentlyCreated
+                || $warning->wasChanged(['user_id', 'requires_acknowledgement', 'hidden_at', 'acknowledged_at'])) {
+                static::syncAcknowledgementFlag($warning->user_id);
+
+                if ($warning->wasChanged('user_id') && $warning->getOriginal('user_id')) {
+                    static::syncAcknowledgementFlag($warning->getOriginal('user_id'));
+                }
+            }
+        });
+
+        static::deleted(function (self $warning) {
+            if ($warning->requires_acknowledgement) {
+                static::syncAcknowledgementFlag($warning->user_id);
+            }
+        });
     }
 
     public function warnedUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -123,6 +160,37 @@ class Warning extends AbstractModel
         }
 
         return $this;
+    }
+
+    /**
+     * Record that the warned user has acknowledged the warning.
+     *
+     * Guarded like hide(), so acknowledging twice keeps the original timestamp.
+     */
+    public function acknowledge(): static
+    {
+        if (! $this->acknowledged_at) {
+            $this->acknowledged_at = Carbon::now();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Recompute whether the user has any warning still awaiting acknowledgement.
+     */
+    public static function syncAcknowledgementFlag(int $userId): void
+    {
+        // One statement, so two warnings acknowledged at the same moment can't
+        // interleave a stale read with a later write and leave the flag set.
+        $pending = static::query()
+            ->selectRaw('count(*) > 0')
+            ->where('user_id', $userId)
+            ->where('requires_acknowledgement', true)
+            ->whereNull('acknowledged_at')
+            ->whereNull('hidden_at');
+
+        User::query()->whereKey($userId)->toBase()->update(['has_unacknowledged_warnings' => $pending]);
     }
 
     public static function strikesForUser(User $user): int

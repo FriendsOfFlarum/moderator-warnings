@@ -20,6 +20,7 @@ export default class WarningModal<CustomAttrs extends IWarningModalAttrs = IWarn
   publicComment!: Stream<string>;
   privateComment!: Stream<string>;
   strikes!: Stream<number>;
+  requiresAcknowledgement!: Stream<boolean>;
   successAlert?: AlertIdentifier;
 
   oninit(vnode: Mithril.Vnode<CustomAttrs, this>) {
@@ -28,6 +29,7 @@ export default class WarningModal<CustomAttrs extends IWarningModalAttrs = IWarn
     this.publicComment = Stream('');
     this.privateComment = Stream('');
     this.strikes = Stream(0);
+    this.requiresAcknowledgement = Stream(true);
   }
 
   className() {
@@ -70,6 +72,16 @@ export default class WarningModal<CustomAttrs extends IWarningModalAttrs = IWarn
               </label>
             </div>
           </div>
+          {app.forum.attribute<boolean>('fof-moderator-warnings.requireAcknowledgement') ? (
+            <div className="Form-group">
+              <label className="checkbox">
+                <input type="checkbox" bidi={this.requiresAcknowledgement} disabled={this.loading} />
+                {app.translator.trans('fof-moderator-warnings.forum.warning_modal.requires_acknowledgement_label', {
+                  username: username(this.attrs.user),
+                })}
+              </label>
+            </div>
+          ) : null}
           <div className="Form-group">
             <Button className="Button Button--primary Button--block" type="submit" loading={this.loading}>
               {app.translator.trans('fof-moderator-warnings.forum.warning_modal.submit_button')}
@@ -99,6 +111,10 @@ export default class WarningModal<CustomAttrs extends IWarningModalAttrs = IWarn
       publicComment: this.publicComment(),
       privateComment: this.privateComment(),
     };
+
+    if (app.forum.attribute<boolean>('fof-moderator-warnings.requireAcknowledgement')) {
+      data.requiresAcknowledgement = this.requiresAcknowledgement();
+    }
 
     if (this.attrs.post) {
       data.relationships = {

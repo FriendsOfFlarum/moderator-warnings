@@ -26,7 +26,8 @@ export default class WarningListItem<CustomAttrs extends IWarningListItemAttrs =
 
     this.subtree = new SubtreeRetainer(
       () => this.attrs.warning.freshness,
-      () => this.attrs.warning.isHidden()
+      () => this.attrs.warning.isHidden(),
+      () => this.attrs.warning.acknowledgedAt()?.getTime()
     );
   }
 
@@ -69,6 +70,13 @@ export default class WarningListItem<CustomAttrs extends IWarningListItemAttrs =
                   strikes: warning.strikes() || 0,
                 })}
           </span>
+          {warning.requiresAcknowledgement() ? (
+            <span className={classList('WarningListItem-acknowledgement', { 'WarningListItem-acknowledgement--pending': !warning.acknowledgedAt() })}>
+              {warning.acknowledgedAt()
+                ? app.translator.trans('fof-moderator-warnings.forum.warning_list_item.acknowledged', { time: humanTime(warning.acknowledgedAt()!) })
+                : app.translator.trans('fof-moderator-warnings.forum.warning_list_item.not_acknowledged')}
+            </span>
+          ) : null}
           <hr />
           <ul className="WarningListItem-info">
             {post ? (

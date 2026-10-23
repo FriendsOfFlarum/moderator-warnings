@@ -3,6 +3,7 @@ import { extend } from 'flarum/common/extend';
 import addWarningControl from './addWarningControl';
 import addWarningPage from './addWarningPage';
 import addWarningsToPosts from './addWarningsToPosts';
+import addAcknowledgementModal from './addAcknowledgementModal';
 
 export { default as extend } from './extend';
 
@@ -10,6 +11,7 @@ app.initializers.add('fof-moderator-warnings', () => {
   addWarningControl();
   addWarningPage();
   addWarningsToPosts();
+  addAcknowledgementModal();
 
   extend('flarum/forum/components/NotificationGrid', 'notificationTypes', function (items) {
     items.add('warning', {
