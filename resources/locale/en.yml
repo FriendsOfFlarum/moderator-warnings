@@ -87,3 +87,9 @@ flarum-audit:
         hidden: "Removed {username}'s warning"
         restored: "Restored {username}'s warning"
         deleted: "Permanently deleted {username}'s warning"
+
+core:
+  email:
+    notification:
+      types:
+        warning: Moderator warnings you receive
